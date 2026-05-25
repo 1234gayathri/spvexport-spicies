@@ -100,7 +100,7 @@ function SettingsPage() {
                 value={storeName}
                 onChange={(e) => setStoreName(e.target.value)}
                 className="mt-1 w-full rounded-xl border bg-background px-4 py-2.5 text-sm outline-none focus:border-primary transition"
-                placeholder="Sadbhaav Organic Spices"
+                placeholder="spvexport.com"
               />
             </label>
 
@@ -196,7 +196,7 @@ function SettingsPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full rounded-xl border bg-background pl-10 pr-4 py-2.5 text-sm outline-none focus:border-primary transition"
-                  placeholder="contact@sadbhaav.in"
+                  placeholder="contact@spvexport.com"
                 />
               </div>
             </label>

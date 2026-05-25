@@ -62,9 +62,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Sadbhaav Spices — Pure Spices. Authentic Taste." },
+      { title: "spvexport.com — Pure Spices. Authentic Taste." },
       { name: "description", content: "Premium organic Indian spices — turmeric, chilli, and cardamom. Sourced direct from farms, delivered fresh." },
-      { property: "og:title", content: "Sadbhaav Spices" },
+      { property: "og:title", content: "spvexport.com" },
       { property: "og:description", content: "Pure spices. Authentic taste." },
       { property: "og:type", content: "website" },
     ],

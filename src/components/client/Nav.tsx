@@ -1,16 +1,27 @@
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
-import { Heart, Search, ShoppingCart, User, Menu, X, Package } from "lucide-react";
+import { Heart, Search, ShoppingCart, User, Menu, X, Package, ChevronDown, Facebook, Instagram, Linkedin } from "lucide-react";
 import { useState } from "react";
 import { Logo } from "@/components/Logo";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { useCart } from "@/lib/cart";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
 
 const links = [
   { to: "/", label: "Home", exact: true },
-  { to: "/shop", label: "Shop" },
-  { to: "/shop", label: "Turmeric", search: { cat: "Turmeric" } },
-  { to: "/shop", label: "Chilli", search: { cat: "Chilli" } },
-  { to: "/shop", label: "Cardamom", search: { cat: "Cardamom" } },
+  { to: "/about", label: "About Us" },
+  { to: "/quality", label: "Quality" },
+  { to: "/blog", label: "Blog" },
+  { to: "/contact", label: "Contact" },
+];
+
+const productCategories = [
+  { label: "Turmeric", search: { cat: "Turmeric" } },
+  { label: "Chilli", search: { cat: "Chilli" } },
+  { label: "Cardamom", search: { cat: "Cardamom" } },
 ];
 
 export function ClientNav() {
@@ -32,11 +43,40 @@ export function ClientNav() {
   };
 
   return (
-    <header className="sticky top-0 z-30 border-b bg-background/80 backdrop-blur-md">
+    <>
+      {/* Green Header Bar */}
+      <div className="bg-emerald-700 text-white text-sm">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3">
+          <div className="flex items-center gap-6">
+            <a href="mailto:exim@spvexports.com" className="flex items-center gap-2 hover:opacity-90 transition">
+              <span>📧</span>
+              <span>exim@spvexports.com</span>
+            </a>
+            <div className="hidden sm:flex items-center gap-2">
+              <span>📞</span>
+              <span>+91 9384011239 , +91 9840177629</span>
+            </div>
+          </div>
+          <div className="flex items-center gap-4">
+            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:opacity-90 transition">
+              <Facebook className="h-5 w-5" />
+            </a>
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:opacity-90 transition">
+              <Instagram className="h-5 w-5" />
+            </a>
+            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="hover:opacity-90 transition">
+              <Linkedin className="h-5 w-5" />
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Header */}
+      <header className="sticky top-0 z-30 border-b bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex max-w-7xl items-center gap-4 px-6 py-3.5">
         <Logo to="/" />
         <nav className="ml-6 hidden lg:flex items-center gap-1">
-          {links.slice(0, 2).map((l) => (
+          {links.map((l) => (
             <Link
               key={l.label}
               to={l.to}
@@ -47,12 +87,23 @@ export function ClientNav() {
               {l.label}
             </Link>
           ))}
-          {links.slice(2).map((l) => (
-            <Link key={l.label} to={l.to} search={l.search as any}
-              className="rounded-full px-3.5 py-1.5 text-sm font-medium text-muted-foreground transition hover:bg-accent/10">
-              {l.label}
-            </Link>
-          ))}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="rounded-full px-3.5 py-1.5 text-sm font-medium text-muted-foreground transition hover:bg-accent/10 flex items-center gap-1">
+                Product
+                <ChevronDown className="h-4 w-4" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start">
+              {productCategories.map((cat) => (
+                <DropdownMenuItem key={cat.label} asChild>
+                  <Link to="/shop" search={cat.search as any} className="cursor-pointer">
+                    {cat.label}
+                  </Link>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </nav>
         <div className="ml-auto flex items-center gap-1">
           {showSearch ? (
@@ -88,11 +139,10 @@ export function ClientNav() {
               <Search className="h-4.5 w-4.5" />
             </button>
           )}
-          <ThemeToggle />
           <Link to="/track" className="hidden md:inline-flex h-9 w-9 items-center justify-center rounded-full hover:bg-accent/10 transition" aria-label="Track Order">
             <Package className="h-4.5 w-4.5" />
           </Link>
-          <Link to="/account" className="hidden md:inline-flex h-9 w-9 items-center justify-center rounded-full hover:bg-accent/10 transition" aria-label="Account">
+          <Link to="/profile" className="hidden md:inline-flex h-9 w-9 items-center justify-center rounded-full hover:bg-accent/10 transition" aria-label="Profile">
             <User className="h-4.5 w-4.5" />
           </Link>
           <Link to="/wishlist" className="hidden md:inline-flex h-9 w-9 items-center justify-center rounded-full hover:bg-accent/10 transition" aria-label="Wishlist">
@@ -125,37 +175,65 @@ export function ClientNav() {
           </form>
           <div className="space-y-1">
             {links.map((l) => (
-              <Link key={l.label} to={l.to} search={l.search as any} onClick={() => setOpen(false)}
+              <Link key={l.label} to={l.to} onClick={() => setOpen(false)}
                 className="block py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition">
                 {l.label}
               </Link>
             ))}
+            <details className="py-2">
+              <summary className="text-sm font-medium text-muted-foreground hover:text-foreground transition cursor-pointer">
+                Product
+              </summary>
+              <div className="pl-4 mt-2 space-y-1">
+                {productCategories.map((cat) => (
+                  <Link
+                    key={cat.label}
+                    to="/shop"
+                    search={cat.search as any}
+                    onClick={() => setOpen(false)}
+                    className="block py-1.5 text-sm text-muted-foreground hover:text-foreground transition"
+                  >
+                    {cat.label}
+                  </Link>
+                ))}
+              </div>
+            </details>
             <Link to="/track" onClick={() => setOpen(false)} className="block py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition">Track Order</Link>
-            <Link to="/account" onClick={() => setOpen(false)} className="block py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition">Account</Link>
+            <Link to="/profile" onClick={() => setOpen(false)} className="block py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition">Profile</Link>
             <Link to="/wishlist" onClick={() => setOpen(false)} className="block py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition">Wishlist</Link>
           </div>
         </div>
       )}
     </header>
+    </>
   );
 }
 
 export function ClientFooter() {
   return (
-    <footer className="mt-16 border-t bg-card/40">
-      <div className="mx-auto grid max-w-7xl gap-10 px-6 py-14 sm:grid-cols-2 lg:grid-cols-4">
+    <footer className="mt-16 border-t border-slate-200 bg-emerald-50 text-slate-900">
+      <div className="mx-auto grid max-w-7xl gap-10 px-6 py-16 sm:grid-cols-2 lg:grid-cols-4">
         <div>
           <Logo to="/" />
-          <p className="mt-4 text-sm text-muted-foreground max-w-xs">
-            Pure spices. Authentic taste. Sourced direct from Indian farms with love and care.
+          <p className="mt-4 text-sm leading-7 text-slate-700 max-w-xs">
+            At SPV Export Spices, every meal has a story to tell. Our spices bring flavor, quality, and trust to kitchens across India and beyond.
           </p>
         </div>
-        <FooterCol title="Shop" links={[["All Products","/shop"],["Turmeric","/shop"],["Chilli","/shop"],["Cardamom","/shop"]]} />
-        <FooterCol title="Company" links={[["About","/"],["Contact","/"],["Sustainability","/"],["Blog","/"]]} />
-        <FooterCol title="Help" links={[["Track Order","/track"],["Returns","/"],["FAQs","/"]]} />
+        <FooterCol title="Products" links={[["All Products","/shop"],["Turmeric","/shop?cat=Turmeric"],["Chilli","/shop?cat=Chilli"],["Cardamom","/shop?cat=Cardamom"]]} />
+        <FooterCol title="Quick Links" links={[["Home","/"],["About Us","/about"],["Quality","/quality"],["Blog & News","/blog"],["Contact Us","/contact"]]} />
+        <div>
+          <div className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-600">Contact Us</div>
+          <div className="mt-4 space-y-2 text-sm leading-6 text-slate-700">
+            <p className="font-semibold text-slate-900">Sadbhaav Spices</p>
+            <p>Elango Street, Alwarthirunagar</p>
+            <p>Chennai, Tamil Nadu 600087</p>
+            <p>District: Chennai</p>
+            <p>India</p>
+          </div>
+        </div>
       </div>
-      <div className="border-t py-5 text-center text-xs text-muted-foreground">
-        © {new Date().getFullYear()} Sadbhaav Spices Co. · Crafted in India
+      <div className="border-t border-slate-200 py-5 text-center text-xs text-slate-600">
+        © {new Date().getFullYear()} SPV Export Spices · Exporting Company · Crafted in India
       </div>
     </footer>
   );

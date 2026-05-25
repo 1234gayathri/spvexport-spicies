@@ -9,6 +9,10 @@
 
     /* Bundler mode */
     "moduleResolution": "Bundler",
+    "ignoreDeprecations": "6.0",
+    "baseUrl": ".",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": false,
     "noEmit": true,

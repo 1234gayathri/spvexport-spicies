@@ -1,7 +1,7 @@
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { useState } from "react";
-import { Minus, Plus, ShoppingBag, Heart, Star, Truck, ShieldCheck, Leaf } from "lucide-react";
+import { Minus, Plus, ShoppingBag, Heart, Star, Truck, ShieldCheck, Leaf, X } from "lucide-react";
 import { toast } from "sonner";
 import { useCart } from "@/lib/cart";
 import { ProductCard } from "@/components/client/ProductCard";
@@ -14,6 +14,29 @@ export const getClientProductFn = createServerFn({ method: "GET" })
     const all = (await getProducts()) as Product[];
     const p = all.find((x: Product) => x.id === id);
     return { product: p || null, all };
+  });
+
+export const submitRatingFn = createServerFn({ method: "POST" })
+  .inputValidator((data: { productId: string; rating: number; review: string }) => data)
+  .handler(async ({ data }) => {
+    const { getProducts, updateProduct } = await import("@/lib/db");
+    const products = (await getProducts()) as Product[];
+    const product = products.find((p: Product) => p.id === data.productId);
+    
+    if (!product) throw new Error("Product not found");
+    
+    // Calculate new average rating
+    const totalRating = (product.rating * product.reviews) + data.rating;
+    const newReviews = product.reviews + 1;
+    const newRating = parseFloat((totalRating / newReviews).toFixed(1));
+    
+    // Update product
+    await updateProduct(data.productId, {
+      rating: newRating,
+      reviews: newReviews
+    });
+    
+    return { success: true, newRating, newReviews };
   });
 
 export const Route = createFileRoute("/_store/product/$id")({
@@ -30,7 +53,7 @@ export const Route = createFileRoute("/_store/product/$id")({
     </div>
   ),
   head: ({ loaderData }) => ({
-    meta: [{ title: `${loaderData?.product.name} — Sadbhaav Spices` }],
+    meta: [{ title: `${loaderData?.product.name} — spvexport.com` }],
   }),
 });
 
@@ -41,6 +64,40 @@ function ProductDetail() {
   const nav = useNavigate();
   const wished = wishlist.includes(p.id);
   const related = (all as Product[]).filter((x: Product) => x.id !== p.id).slice(0, 3);
+  
+  // Rating form state
+  const [showRatingModal, setShowRatingModal] = useState(false);
+  const [ratingValue, setRatingValue] = useState(5);
+  const [reviewText, setReviewText] = useState("");
+  const [isSubmittingRating, setIsSubmittingRating] = useState(false);
+
+  const handleSubmitRating = async () => {
+    if (!reviewText.trim()) {
+      toast.error("Please write a review");
+      return;
+    }
+    
+    setIsSubmittingRating(true);
+    try {
+      await submitRatingFn({
+        data: {
+          productId: p.id,
+          rating: ratingValue,
+          review: reviewText
+        }
+      });
+      toast.success("Thank you! Your rating has been submitted");
+      setShowRatingModal(false);
+      setReviewText("");
+      setRatingValue(5);
+      // Refresh the page to see updated rating
+      window.location.reload();
+    } catch (err) {
+      toast.error("Failed to submit rating");
+    } finally {
+      setIsSubmittingRating(false);
+    }
+  };
 
   return (
     <div className="mx-auto max-w-7xl px-6 py-10">
@@ -68,11 +125,21 @@ function ProductDetail() {
           {p.badge && <span className="rounded-full bg-accent/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-accent">{p.badge}</span>}
           <h1 className="mt-3 font-display text-4xl font-semibold sm:text-5xl">{p.name}</h1>
           <p className="mt-2 text-muted-foreground">{p.tagline}</p>
-          <div className="mt-3 flex items-center gap-2 text-sm">
-            <Star className="h-4 w-4 fill-primary text-primary" />
-            <span className="font-semibold">{p.rating}</span>
-            <span className="text-muted-foreground">({p.reviews} reviews)</span>
-          </div>
+          {p.rating > 0 && (
+            <div className="mt-3 flex items-center justify-between">
+              <div className="flex items-center gap-2 text-sm">
+                <Star className="h-4 w-4 fill-primary text-primary" />
+                <span className="font-semibold">{p.rating}</span>
+                <span className="text-muted-foreground">({p.reviews} reviews)</span>
+              </div>
+              <button
+                onClick={() => setShowRatingModal(true)}
+                className="text-xs text-primary underline hover:no-underline"
+              >
+                Share your experience
+              </button>
+            </div>
+          )}
           <div className="mt-6 flex items-baseline gap-3">
             <span className="font-display text-4xl font-semibold">₹{p.price}</span>
             {p.oldPrice && <span className="text-lg text-muted-foreground line-through">₹{p.oldPrice}</span>}
@@ -89,7 +156,10 @@ function ProductDetail() {
               <span className="px-4 font-semibold tabular-nums">{qty}</span>
               <button onClick={() => setQty((q) => q + 1)} className="p-3 hover:bg-accent/10 rounded-r-full"><Plus className="h-4 w-4" /></button>
             </div>
-            <span className="text-xs text-muted-foreground">{p.stock} in stock</span>
+            <div className="text-xs text-muted-foreground">
+              <div className="font-semibold">{p.stock} in stock</div>
+              <div className="text-muted-foreground">Available quantity: {p.quantity}</div>
+            </div>
           </div>
 
           <div className="mt-6 flex flex-wrap gap-3">
@@ -131,6 +201,64 @@ function ProductDetail() {
           {related.map((r) => <ProductCard key={r.id} p={r} />)}
         </div>
       </section>
+
+      {/* Rating Modal */}
+      {showRatingModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-charcoal/60 backdrop-blur-sm p-4" onClick={() => setShowRatingModal(false)}>
+          <div onClick={(e) => e.stopPropagation()} className="w-full max-w-md rounded-2xl bg-card p-6 shadow-elegant">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-display text-2xl font-semibold">Rate {p.name}</h3>
+              <button onClick={() => setShowRatingModal(false)} className="p-1 rounded-lg hover:bg-muted/40">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            
+            <div className="mb-4">
+              <label className="text-xs text-muted-foreground">Your Rating</label>
+              <div className="mt-2 flex gap-2">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    onClick={() => setRatingValue(star)}
+                    className="text-3xl transition hover:scale-110"
+                  >
+                    <Star
+                      className={`h-8 w-8 ${star <= ratingValue ? "fill-primary text-primary" : "text-muted-foreground"}`}
+                    />
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="mb-4">
+              <label className="text-xs text-muted-foreground">Your Review (optional but helpful!)</label>
+              <textarea
+                value={reviewText}
+                onChange={(e) => setReviewText(e.target.value)}
+                placeholder="Share your experience with this product..."
+                rows={4}
+                className="mt-2 w-full rounded-xl border bg-background px-4 py-2.5 text-sm outline-none focus:border-primary"
+              />
+            </div>
+
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setShowRatingModal(false)}
+                className="rounded-full border px-5 py-2 text-sm font-semibold hover:bg-muted/20"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSubmitRating}
+                disabled={isSubmittingRating}
+                className="rounded-full bg-foreground px-5 py-2 text-sm font-semibold text-background hover:opacity-90 disabled:opacity-50"
+              >
+                {isSubmittingRating ? "Submitting..." : "Submit Rating"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

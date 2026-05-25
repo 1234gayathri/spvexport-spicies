@@ -38,23 +38,36 @@ export function ProductCard({ p }: { p: Product }) {
         <Link to="/product/$id" params={{ id: p.id }}>
           <h3 className="mt-1 font-display text-base font-semibold leading-tight line-clamp-1">{p.name}</h3>
         </Link>
-        <div className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
-          <Star className="h-3 w-3 fill-primary text-primary" />
-          <span>{p.rating}</span>
-          <span>·</span>
-          <span>{p.reviews} reviews</span>
+        <div className="mt-1 flex items-center justify-between">
+          {p.rating > 0 && (
+            <div className="flex items-center gap-1 text-xs text-muted-foreground">
+              <Star className="h-3 w-3 fill-primary text-primary" />
+              <span>{p.rating}</span>
+              <span>·</span>
+              <span>{p.reviews} reviews</span>
+            </div>
+          )}
+          <span className="text-xs font-medium text-muted-foreground ml-auto">
+            {p.quantity ? p.quantity : `${p.stock} units`}
+          </span>
         </div>
         <div className="mt-3 flex items-center justify-between">
           <div className="flex items-baseline gap-1.5">
             <span className="font-display text-lg font-semibold">₹{p.price}</span>
             {p.oldPrice && <span className="text-xs text-muted-foreground line-through">₹{p.oldPrice}</span>}
           </div>
-          <button
-            onClick={() => { add(p.id); toast.success(`${p.name} added to cart`); }}
-            className="inline-flex items-center gap-1.5 rounded-full bg-foreground px-3 py-1.5 text-xs font-semibold text-background transition hover:opacity-90"
-          >
-            <ShoppingBag className="h-3.5 w-3.5" /> Add
-          </button>
+          {p.stock > 0 ? (
+            <button
+              onClick={() => { add(p.id); toast.success(`${p.name} added to cart`); }}
+              className="inline-flex items-center gap-1.5 rounded-full bg-foreground px-3 py-1.5 text-xs font-semibold text-background transition hover:opacity-90"
+            >
+              <ShoppingBag className="h-3.5 w-3.5" /> Add
+            </button>
+          ) : (
+            <span className="rounded-full bg-destructive/10 px-3 py-1.5 text-xs font-semibold text-destructive">
+              Out of Stock
+            </span>
+          )}
         </div>
       </div>
     </motion.div>

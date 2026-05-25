@@ -1,9 +1,8 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { createServerFn } from "@tanstack/react-start";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   LayoutDashboard, Package, ShoppingCart, Users, Tag, Image as ImageIcon,
-  Settings, Bell, Search, Menu, X, ArrowLeft, Lock
+  Settings, Bell, Search, Menu, X, Lock
 } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -18,12 +17,12 @@ const nav = [
   { to: "/admin/settings", label: "Settings", icon: Settings },
 ];
 
-export const getAdminHeaderDataFn = createServerFn({ method: "GET" }).handler(async () => {
+async function getAdminHeaderData() {
   const { getSettings, getOrders } = await import("@/lib/db");
   const settings = await getSettings();
   const pendingOrders = (await getOrders()).filter((o) => o.status === "Pending").length;
   return { email: settings.email, pendingOrders };
-});
+}
 
 export function AdminShell({ children, title, subtitle }: { children: React.ReactNode; title: string; subtitle?: string }) {
   const path = useRouterState({ select: (s) => s.location.pathname });
@@ -37,7 +36,7 @@ export function AdminShell({ children, title, subtitle }: { children: React.Reac
 
   const fetchHeaderData = useCallback(() => {
     if (auth) {
-      getAdminHeaderDataFn().then(setHeaderData).catch((err) => console.error("Error fetching header data:", err));
+      getAdminHeaderData().then(setHeaderData).catch((err) => console.error("Error fetching header data:", err));
     }
   }, [auth]);
 
@@ -133,11 +132,6 @@ export function AdminShell({ children, title, subtitle }: { children: React.Reac
             );
           })}
         </nav>
-        <div className="absolute bottom-4 left-3 right-3">
-          <Link to="/" className="flex items-center gap-2 rounded-xl border bg-card p-3 text-xs hover:bg-sidebar-accent transition">
-            <ArrowLeft className="h-3.5 w-3.5" /> Back to landing
-          </Link>
-        </div>
       </aside>
 
       <div className="lg:pl-64">

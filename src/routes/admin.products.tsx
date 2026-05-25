@@ -64,6 +64,7 @@ function ProductsPage() {
   const [category, setCategory] = useState("Turmeric");
   const [price, setPrice] = useState("");
   const [stock, setStock] = useState("");
+  const [quantity, setQuantity] = useState("");
   const [description, setDescription] = useState("");
   const [tagline, setTagline] = useState("");
   const [image, setImage] = useState("");
@@ -90,7 +91,7 @@ function ProductsPage() {
   };
 
   const openAdd = () => {
-    setName(""); setCategory("Turmeric"); setPrice(""); setStock("");
+    setName(""); setCategory("Turmeric"); setPrice(""); setStock(""); setQuantity("");
     setDescription(""); setTagline(""); setImage("");
     setModal(true);
   };
@@ -105,6 +106,7 @@ function ProductsPage() {
           category: category as Product["category"],
           price: Number(price),
           stock: Number(stock),
+          quantity: quantity || undefined,
           description,
           tagline,
           rating: 0,
@@ -178,6 +180,7 @@ function ProductsPage() {
               <th className="px-5 py-3 text-left font-medium">Product</th>
               <th className="px-5 py-3 text-left font-medium">Category</th>
               <th className="px-5 py-3 text-left font-medium">Price</th>
+              <th className="px-5 py-3 text-left font-medium">Quantity</th>
               <th className="px-5 py-3 text-left font-medium">Stock</th>
               <th className="px-5 py-3 text-left font-medium">Rating</th>
               <th className="px-5 py-3 text-right font-medium">Actions</th>
@@ -202,6 +205,7 @@ function ProductsPage() {
                 </td>
                 <td className="px-5 py-3">{p.category}</td>
                 <td className="px-5 py-3 font-semibold">₹{p.price}</td>
+                <td className="px-5 py-3">{p.quantity ?? 0}</td>
                 <td className="px-5 py-3">
                   <span
                     className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
@@ -240,7 +244,7 @@ function ProductsPage() {
             ))}
             {list.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-5 py-10 text-center text-muted-foreground">
+                <td colSpan={7} className="px-5 py-10 text-center text-muted-foreground">
                   No products found.
                 </td>
               </tr>
@@ -268,6 +272,7 @@ function ProductsPage() {
             </label>
             <Field label="Price (₹)" type="number" value={price} onChange={(e: any) => setPrice(e.target.value)} />
             <Field label="Stock" type="number" value={stock} onChange={(e: any) => setStock(e.target.value)} />
+            <Field label="Quantity" type="text" value={quantity} onChange={(e: any) => setQuantity(e.target.value)} />
             <Field label="Tagline" value={tagline} onChange={(e: any) => setTagline(e.target.value)} className="sm:col-span-2" />
             <div className="sm:col-span-2">
               <label className="text-xs text-muted-foreground">Description</label>
@@ -341,6 +346,12 @@ function ProductsPage() {
               type="number"
               value={String(editProduct.stock)}
               onChange={(e: any) => setEditProduct({ ...editProduct, stock: Number(e.target.value) })}
+            />
+            <Field
+              label="Quantity"
+              type="text"
+              value={String(editProduct.quantity ?? "")}
+              onChange={(e: any) => setEditProduct({ ...editProduct, quantity: e.target.value })}
             />
             <Field
               label="Tagline"

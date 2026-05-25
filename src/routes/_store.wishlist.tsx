@@ -7,7 +7,7 @@ import { Heart } from "lucide-react";
 export const Route = createFileRoute("/_store/wishlist")({
   component: WishlistPage,
   loader: () => getShopProductsFn(),
-  head: () => ({ meta: [{ title: "My Wishlist — Sadbhaav Spices" }] }),
+  head: () => ({ meta: [{ title: "My Wishlist — spvexport.com" }] }),
 });
 
 function WishlistPage() {

@@ -21,23 +21,32 @@ export const getShopProductsFn = createServerFn({ method: "GET" }).handler(async
 export const Route = createFileRoute("/_store/shop")({
   component: Shop,
   loader: () => getShopProductsFn(),
-  validateSearch: (s: Record<string, unknown>): { cat?: string; q?: string } => ({
+  validateSearch: (s: Record<string, unknown>): { cat?: string; q?: string; sort?: string } => ({
     cat: s.cat as string | undefined,
     q: s.q as string | undefined,
+    sort: s.sort as string | undefined,
   }),
-  head: () => ({ meta: [{ title: "Shop — Sadbhaav Spices" }] }),
+  head: () => ({ meta: [{ title: "Shop — spvexport.com" }] }),
 });
 
 function Shop() {
   const products = Route.useLoaderData();
-  const { cat = "All", q: searchQ = "" } = Route.useSearch();
+  const { cat = "All", q: searchQ = "", sort: searchSort = "popular" } = Route.useSearch();
   const [q, setQ] = useState(searchQ);
-  const [sort, setSort] = useState("popular");
+  const [sort, setSort] = useState(searchSort);
   const [activeCat, setActiveCat] = useState(cat);
 
   useEffect(() => {
     setQ(searchQ);
   }, [searchQ]);
+
+  useEffect(() => {
+    setSort(searchSort);
+  }, [searchSort]);
+
+  useEffect(() => {
+    setActiveCat(cat);
+  }, [cat]);
 
   const list = useMemo(() => {
     let l = products.filter((p) =>

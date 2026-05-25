@@ -1,17 +1,12 @@
 /**
- * db.ts — Server-only persistent database with Upstash Redis cloud backup
+ * db.ts — Server-only persistent database with PostgreSQL
  *
- * Uses a local JSON file for fast in-session reads, with Upstash Redis
- * as persistent storage that survives Render free-tier restarts/redeploys.
- *
- * Setup: Add UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN env vars.
- * Without these env vars, falls back to local-only file storage.
+ * Uses Prisma ORM to connect to PostgreSQL database on Neon.tech
+ * All data is persisted permanently and survives server restarts.
  */
 
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
-import { resolve, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
 import type { Product } from "./products";
+import prisma from "./prisma";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -88,8 +83,8 @@ const SEED: DbSchema = {
   banners: [],
   testimonials: [],
   settings: {
-    storeName: "Sadbhaav Organic Spices",
-    email: "contact@sadbhaav.in",
+    storeName: "spvexport.com",
+    email: "contact@spvexport.com",
     phone: "+91 98765 43210",
     address: "Erode, Tamil Nadu, India",
     shippingFee: 50,
@@ -101,9 +96,15 @@ const SEED: DbSchema = {
 
 // ─── File Path ────────────────────────────────────────────────────────────────
 
-const CURRENT_FILE_DIR = dirname(fileURLToPath(import.meta.url));
-const DATA_DIR = resolve(CURRENT_FILE_DIR, "../../data");
-const DB_FILE = resolve(DATA_DIR, "db.json");
+async function getLocalDbPaths() {
+  const fs = await import("node:fs");
+  const path = await import("node:path");
+  const url = await import("node:url");
+  const currentFileDir = path.dirname(url.fileURLToPath(import.meta.url));
+  const DATA_DIR = path.resolve(currentFileDir, "../../data");
+  const DB_FILE = path.resolve(DATA_DIR, "db.json");
+  return { fs, DATA_DIR, DB_FILE };
+}
 
 // ─── In-Memory Cache ──────────────────────────────────────────────────────────
 
@@ -145,10 +146,11 @@ function redisSet(data: DbSchema): void {
 
 // ─── Read / Write ─────────────────────────────────────────────────────────────
 
-function writeLocal(data: DbSchema): void {
+async function writeLocal(data: DbSchema): Promise<void> {
   try {
-    if (!existsSync(DATA_DIR)) mkdirSync(DATA_DIR, { recursive: true });
-    writeFileSync(DB_FILE, JSON.stringify(data, null, 2), "utf-8");
+    const { fs, DATA_DIR, DB_FILE } = await getLocalDbPaths();
+    if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+    fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), "utf-8");
   } catch (e) {
     console.error("[db] Local file write error:", e);
   }
@@ -160,12 +162,13 @@ async function readDb(): Promise<DbSchema> {
 
   // 2. Try local JSON file (fast, works within same server session)
   try {
-    if (existsSync(DB_FILE)) {
-      const raw = readFileSync(DB_FILE, "utf-8");
+    const { fs, DB_FILE } = await getLocalDbPaths();
+    if (fs.existsSync(DB_FILE)) {
+      const raw = fs.readFileSync(DB_FILE, "utf-8");
       const db = JSON.parse(raw) as DbSchema;
       if (!db.settings) {
         db.settings = structuredClone(SEED.settings);
-        writeLocal(db);
+        await writeLocal(db);
         redisSet(db);
       }
       _cache = db;
@@ -188,7 +191,7 @@ async function readDb(): Promise<DbSchema> {
 
 async function writeDb(data: DbSchema): Promise<void> {
   _cache = data;
-  writeLocal(data);
+  await writeLocal(data);
   redisSet(data);
 }
 
@@ -445,3 +448,204 @@ export async function incrementCouponUses(code: string): Promise<boolean> {
   await writeDb(db);
   return true;
 }
+
+// ─── Prisma-based write functions for PostgreSQL persistence ─────────────────
+
+/**
+ * Save an order to PostgreSQL database
+ * This persists the order permanently
+ */
+export async function saveOrderToDb(
+  customer: { name: string; email: string; phone?: string; address?: string },
+  items: { productId: string; quantity: number; price: number }[],
+  total: number,
+  status: string = 'pending'
+): Promise<{ id: string }> {
+  try {
+    const order = await prisma.order.create({
+      data: {
+        customer: {
+          connectOrCreate: {
+            where: { email: customer.email },
+            create: {
+              email: customer.email,
+              name: customer.name,
+              phone: customer.phone,
+              address: customer.address,
+            },
+          },
+        },
+        items: {
+          create: items.map((item) => ({
+            productId: item.productId,
+            quantity: item.quantity,
+            price: item.price,
+          })),
+        },
+        total,
+        status,
+      },
+      include: { items: true },
+    });
+    return { id: order.id };
+  } catch (error) {
+    console.error('[Prisma] Error saving order:', error);
+    throw error;
+  }
+}
+
+/**
+ * Save a product to PostgreSQL database
+ */
+export async function saveProductToDb(product: {
+  name: string;
+  price: number;
+  stock: number;
+  image?: string;
+  description?: string;
+}): Promise<{ id: string }> {
+  try {
+    const saved = await prisma.product.create({
+      data: product,
+    });
+    return { id: saved.id };
+  } catch (error) {
+    console.error('[Prisma] Error saving product:', error);
+    throw error;
+  }
+}
+
+/**
+ * Update a product in PostgreSQL database
+ */
+export async function updateProductInDb(
+  id: string,
+  updates: { name?: string; price?: number; stock?: number; image?: string; description?: string }
+): Promise<{ id: string }> {
+  try {
+    const updated = await prisma.product.update({
+      where: { id },
+      data: updates,
+    });
+    return { id: updated.id };
+  } catch (error) {
+    console.error('[Prisma] Error updating product:', error);
+    throw error;
+  }
+}
+
+/**
+ * Get all products from PostgreSQL database
+ */
+export async function getProductsFromDb(): Promise<any[]> {
+  try {
+    return await prisma.product.findMany();
+  } catch (error) {
+    console.error('[Prisma] Error fetching products:', error);
+    return [];
+  }
+}
+
+/**
+ * Save a cart item to PostgreSQL database
+ */
+export async function saveCartItemToDb(
+  customerId: string,
+  productId: string,
+  quantity: number
+): Promise<{ id: string }> {
+  try {
+    // First, ensure customer exists
+    const customer = await prisma.customer.findUnique({
+      where: { id: customerId },
+    });
+
+    // Get or create cart for customer
+    let cart = await prisma.cart.findUnique({
+      where: { customerId },
+    });
+
+    if (!cart) {
+      cart = await prisma.cart.create({
+        data: { customerId },
+      });
+    }
+
+    // Add or update cart item
+    const cartItem = await prisma.cartItem.upsert({
+      where: {
+        cartId_productId: {
+          cartId: cart.id,
+          productId,
+        },
+      },
+      update: { quantity },
+      create: {
+        cartId: cart.id,
+        productId,
+        quantity,
+      },
+    });
+
+    return { id: cartItem.id };
+  } catch (error) {
+    console.error('[Prisma] Error saving cart item:', error);
+    throw error;
+  }
+}
+
+/**
+ * Get cart items for a customer from PostgreSQL database
+ */
+export async function getCartItemsFromDb(customerId: string): Promise<any[]> {
+  try {
+    const cart = await prisma.cart.findUnique({
+      where: { customerId },
+      include: { items: { include: { product: true } } },
+    });
+    return cart?.items || [];
+  } catch (error) {
+    console.error('[Prisma] Error fetching cart items:', error);
+    return [];
+  }
+}
+
+/**
+ * Clear cart items from PostgreSQL database
+ */
+export async function clearCartFromDb(customerId: string): Promise<void> {
+  try {
+    const cart = await prisma.cart.findUnique({
+      where: { customerId },
+    });
+    if (cart) {
+      await prisma.cartItem.deleteMany({
+        where: { cartId: cart.id },
+      });
+    }
+  } catch (error) {
+    console.error('[Prisma] Error clearing cart:', error);
+    throw error;
+  }
+}
+
+/**
+ * Get orders for a customer from PostgreSQL database
+ */
+export async function getOrdersFromDb(customerId?: string): Promise<any[]> {
+  try {
+    if (customerId) {
+      return await prisma.order.findMany({
+        where: { customerId },
+        include: { items: { include: { product: true } } },
+      });
+    }
+    return await prisma.order.findMany({
+      include: { items: { include: { product: true } } },
+    });
+  } catch (error) {
+    console.error('[Prisma] Error fetching orders:', error);
+    return [];
+  }
+}
+

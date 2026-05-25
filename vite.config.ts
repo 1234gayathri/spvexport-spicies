@@ -6,12 +6,22 @@ import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
   plugins: [
-    tanstackStart(),
+    tanstackStart({
+      serverFns: {
+        disableCsrfMiddlewareWarning: true,
+      }
+    }),
     viteReact(),
     tailwindcss(),
     tsconfigPaths()
   ],
   preview: {
     allowedHosts: true
+  },
+  ssr: {
+    external: ['@prisma/client']
+  },
+  optimizeDeps: {
+    exclude: ['@prisma/client']
   }
 });

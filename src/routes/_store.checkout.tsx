@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
-import { useState } from "react";
-import { CheckCircle2, CreditCard, MapPin, Truck } from "lucide-react";
+import { useState, useEffect } from "react";
+import { CheckCircle2, CreditCard, MapPin, Truck, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { useCart } from "@/lib/cart";
 
@@ -28,8 +28,8 @@ export const validateCouponFn = createServerFn({ method: "POST" })
     if (found.uses >= found.maxUses) {
       return { valid: false, message: "Coupon limit reached" };
     }
-    const expiryDate = new Date(found.expiry);
-    if (!isNaN(expiryDate.getTime()) && expiryDate < new Date()) {
+    const expiryDate = found.expiry ? new Date(found.expiry) : null;
+    if (expiryDate && !isNaN(expiryDate.getTime()) && expiryDate < new Date()) {
       return { valid: false, message: "Coupon has expired" };
     }
     return { valid: true, coupon: found };
@@ -57,8 +57,30 @@ export const placeOrderFn = createServerFn({ method: "POST" })
     if (data.couponCode) {
       await incrementCouponUses(data.couponCode);
     }
+
     return order;
   });
+
+async function sendOrderConfirmationEmail({
+  orderId,
+  customerName,
+  customerEmail,
+  total,
+  itemCount,
+  paymentMethod,
+  address,
+}: {
+  orderId: string;
+  customerName: string;
+  customerEmail: string;
+  total: number;
+  itemCount: number;
+  paymentMethod: string;
+  address: string;
+}) {
+  // Email sending removed (EmailJS). Placeholder kept for future integration.
+  return;
+}
 
 // ─── Helper Functions ──────────────────────────────────────────────────────────
 
@@ -101,17 +123,19 @@ function getCouponDiscount(
 export const Route = createFileRoute("/_store/checkout")({
   component: Checkout,
   loader: () => getCheckoutSettingsFn(),
-  head: () => ({ meta: [{ title: "Checkout — Sadbhaav Spices" }] }),
+  head: () => ({ meta: [{ title: "Checkout — spvexport.com" }] }),
 });
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
 function Checkout() {
+  const nav = useNavigate();
   const settings = Route.useLoaderData();
   const { items, subtotal, clear, setQty, remove } = useCart();
   const [pay, setPay] = useState("upi");
   const [done, setDone] = useState(false);
   const [deliveryMethod, setDeliveryMethod] = useState("standard");
+  const [profileLoaded, setProfileLoaded] = useState(false);
 
   // Input states
   const [fullName, setFullName] = useState("");
@@ -120,6 +144,29 @@ function Checkout() {
   const [address, setAddress] = useState("");
   const [city, setCity] = useState("");
   const [pinCode, setPinCode] = useState("");
+
+  // Check profile completion on mount
+  useEffect(() => {
+    const saved = localStorage.getItem("customerProfile");
+    if (!saved) {
+      // Profile not completed, redirect to profile page
+      toast.error("Please complete your profile first");
+      nav({ to: "/profile" });
+      return;
+    }
+
+    try {
+      const profile = JSON.parse(saved);
+      setFullName(profile.name || "");
+      setEmail(profile.email || "");
+      setPhone(profile.phone || "");
+      setAddress(profile.address || "");
+      setProfileLoaded(true);
+    } catch (e) {
+      toast.error("Invalid profile data");
+      nav({ to: "/profile" });
+    }
+  }, [nav]);
 
   // Payment states
   const [cardNo, setCardNo] = useState("");
@@ -262,6 +309,18 @@ function Checkout() {
         >
           Back to store
         </Link>
+      </div>
+    );
+  }
+
+  if (!profileLoaded) {
+    return (
+      <div className="mx-auto max-w-md px-6 py-24 text-center">
+        <div className="animate-pulse space-y-4">
+          <div className="h-8 bg-muted/40 rounded-lg w-2/3 mx-auto"></div>
+          <div className="h-4 bg-muted/30 rounded-lg w-4/5 mx-auto"></div>
+        </div>
+        <p className="mt-6 text-muted-foreground">Loading your profile...</p>
       </div>
     );
   }

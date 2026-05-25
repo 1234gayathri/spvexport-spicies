@@ -19,7 +19,7 @@ export const trackOrderFn = createServerFn({ method: "POST" })
 
 export const Route = createFileRoute("/_store/track")({
   component: TrackPage,
-  head: () => ({ meta: [{ title: "Track My Order — Sadbhaav Spices" }] }),
+  head: () => ({ meta: [{ title: "Track My Order — spvexport.com" }] }),
 });
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -112,13 +112,13 @@ function TrackPage() {
           </div>
           <h2 className="font-display text-xl font-semibold">Order Not Found</h2>
           <p className="mt-2 text-muted-foreground text-xs px-6">
-            We couldn't find an order matching <span className="font-mono font-semibold">{orderIdInput.toUpperCase()}</span>. Please verify your receipt or search in your profile.
+            We couldn't find an order matching <span className="font-mono font-semibold">{orderIdInput.toUpperCase()}</span>. Please verify your receipt or check your profile for order details.
           </p>
           <Link
-            to="/account"
+            to="/profile"
             className="mt-5 text-xs text-primary underline font-semibold flex items-center gap-1"
           >
-            Go to Profile Lookup <ArrowRight className="h-3 w-3" />
+            Go to Profile <ArrowRight className="h-3 w-3" />
           </Link>
         </div>
       )}

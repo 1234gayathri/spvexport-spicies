@@ -16,6 +16,7 @@ export type Product = {
   description: string;
   ingredients: string[];
   stock: number;
+  quantity?: string;
 };
 
 export const products: Product[] = [

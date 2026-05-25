@@ -1,10 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Quote, Sparkles, ChevronLeft, ChevronRight, Leaf, ShieldCheck, Heart } from "lucide-react";
 import { ProductCard } from "@/components/client/ProductCard";
-import heroImg from "@/assets/hero-spices.jpg";
+import heroBg from "@/assets/31.png";
 import turmericImg from "@/assets/turmeric.jpg";
 import chilliImg from "@/assets/chilli.jpg";
 import cardamomImg from "@/assets/cardamom.jpg";
@@ -38,7 +38,7 @@ export const getClientHomeFn = createServerFn({ method: "GET" }).handler(async (
 export const Route = createFileRoute("/_store/")({
   component: ClientHome,
   loader: () => getClientHomeFn(),
-  head: () => ({ meta: [{ title: "Sadbhaav Spices — Store" }] }),
+  head: () => ({ meta: [{ title: "spvexport.com — Store" }] }),
 });
 
 function ClientHome() {
@@ -53,9 +53,18 @@ function ClientHome() {
 
   return (
     <>
-      {/* Hero banner — uses admin-uploaded banner image if available */}
-      <section className="relative overflow-hidden bg-gradient-hero">
-        <div className="mx-auto grid max-w-7xl gap-10 px-6 py-16 lg:grid-cols-2 lg:items-center lg:py-24">
+      {/* Hero banner — animated carousel background */}
+      <section
+        className="relative overflow-hidden"
+        style={{
+          backgroundImage: `linear-gradient(rgba(0,0,0,0.24), rgba(0,0,0,0.18)), url(${heroBg})`,
+          backgroundSize: "110%",
+          backgroundPosition: "center 30%",
+          backgroundRepeat: "no-repeat",
+          minHeight: "520px",
+        }}
+      >
+        <div className="mx-auto grid max-w-7xl gap-10 px-6 py-14 lg:grid-cols-2 lg:items-center lg:py-20">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
             <span className="inline-flex items-center gap-1.5 rounded-full bg-accent/10 px-3 py-1 text-xs font-semibold text-accent">
               <Sparkles className="h-3 w-3" /> Fresh harvest 2026
@@ -75,24 +84,23 @@ function ClientHome() {
               </Link>
             </div>
           </motion.div>
+          
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8 }}
-            className="relative aspect-[5/4] overflow-hidden rounded-3xl shadow-elegant"
+            className="relative aspect-[5/4] overflow-hidden rounded-3xl shadow-elegant bg-gradient-hero flex items-center justify-center"
           >
-            <img
-              src={heroImg}
-              alt={activeBanner?.text || "Sadbhaav spices"}
-              width={1536}
-              height={1024}
-              className="h-full w-full object-cover"
-            />
-            {activeBanner?.text && (
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6">
-                <p className="text-white font-display text-lg font-semibold">{activeBanner.text}</p>
+            <div className="p-8 max-w-md text-left">
+              {activeBanner?.text ? (
+                <div className="bg-black/40 backdrop-blur-md rounded-lg p-4">
+                  <p className="text-white font-display text-lg font-semibold">{activeBanner.text}</p>
+                </div>
+              ) : null}
+              <div className="mt-6 text-sm text-muted-foreground">
+                <p>Discover our farm-fresh spices — carefully sourced and packaged.</p>
               </div>
-            )}
+            </div>
             {/* Banner navigation controls — only if admin added multiple banners */}
             {banners.length > 1 && (
               <div className="absolute inset-0 flex items-center justify-between px-3 pointer-events-none">
@@ -110,29 +118,33 @@ function ClientHome() {
                 </button>
               </div>
             )}
-            {banners.length > 1 && (
-              <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5">
-                {banners.map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setBannerIdx(i)}
-                    className={`h-1.5 rounded-full transition-all ${i === bannerIdx ? "w-6 bg-white" : "w-1.5 bg-white/50"}`}
-                  />
-                ))}
-              </div>
-            )}
           </motion.div>
         </div>
       </section>
 
       {/* Categories pills */}
-      <section className="border-y bg-card/40 py-8">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-3 px-6">
-          {["All", "Turmeric", "Chilli", "Cardamom", "Best Sellers", "New"].map((c) => (
-            <Link key={c} to="/shop" className="rounded-full border bg-background px-5 py-2 text-sm font-medium hover:border-primary hover:text-primary transition">
-              {c}
-            </Link>
-          ))}
+      <section className="relative py-12 bg-gradient-to-b from-background via-transparent to-background">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-0 left-1/4 h-96 w-96 bg-accent/5 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 right-1/4 h-96 w-96 bg-primary/5 rounded-full blur-3xl" />
+        </div>
+        <div className="relative mx-auto max-w-7xl px-6">
+          <div className="text-center mb-8">
+            <h2 className="text-xl font-semibold text-primary">Shop by Category</h2>
+            <p className="text-sm text-muted-foreground mt-1">Explore our premium spice collection</p>
+          </div>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            {["All", "Turmeric", "Chilli", "Cardamom", "Best Sellers", "New"].map((c) => (
+              <Link 
+                key={c} 
+                to="/shop"
+                search={c !== "All" && c !== "Best Sellers" && c !== "New" ? { cat: c } : c === "Best Sellers" ? { sort: "best" } : c === "New" ? { sort: "new" } : {}}
+                className="category-pill rounded-full px-6 py-2.5 text-sm font-semibold transition-all duration-300 hover:shadow-lg"
+              >
+                {c}
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -164,17 +176,20 @@ function ClientHome() {
           {/* Active coupon promo banner — rendered from admin's live coupon data */}
           {activeCoupon && (
             <section className="mx-auto max-w-7xl px-6">
-              <div className="relative overflow-hidden rounded-3xl bg-gradient-warm p-10 sm:p-14">
-                <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-cream/20 blur-3xl" />
-                <div className="relative max-w-xl text-primary-foreground">
-                  <p className="text-xs font-bold uppercase tracking-[0.2em]">Special offer</p>
-                  <h2 className="mt-3 font-display text-4xl font-semibold sm:text-5xl">{activeCoupon.description}</h2>
-                  <p className="mt-3 opacity-80">
-                    Use code <span className="font-mono font-bold">{activeCoupon.code}</span> at checkout.
+              <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-r from-emerald-50 via-emerald-100 to-emerald-50 p-10 sm:p-14 shadow-soft">
+                <div className="absolute inset-y-0 left-0 w-2 rounded-r-full bg-emerald-300" />
+                <div className="absolute -right-16 -top-8 h-56 w-56 rounded-full bg-emerald-200 opacity-70 blur-3xl" />
+                <div className="relative max-w-xl text-slate-900">
+                  <p className="text-xs font-semibold uppercase tracking-[0.3em] text-emerald-700">Special offer</p>
+                  <h2 className="mt-4 font-display text-4xl font-semibold tracking-tight sm:text-5xl text-slate-900">
+                    {activeCoupon.description}
+                  </h2>
+                  <p className="mt-4 max-w-xl text-sm leading-7 text-slate-700">
+                    Use code <span className="font-mono font-bold text-slate-900">{activeCoupon.code}</span> at checkout.
                   </p>
                   <Link
                     to="/shop"
-                    className="mt-6 inline-flex items-center gap-2 rounded-full bg-foreground px-6 py-3 text-sm font-semibold text-background hover:opacity-90 transition"
+                    className="mt-8 inline-flex items-center gap-2 rounded-full bg-slate-900 px-7 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
                   >
                     Shop now <ArrowRight className="h-4 w-4" />
                   </Link>
@@ -217,14 +232,14 @@ function ClientHome() {
         <hr className="mb-20 opacity-50" />
         <div className="text-center max-w-3xl mx-auto mb-16">
           <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary uppercase tracking-wider">
-            About Sadbhaav Spices
+            About spvexport.com
           </span>
           <h2 className="mt-4 font-display text-4xl font-semibold tracking-tight sm:text-5xl">
             Pure Spices. Authentic Taste.
           </h2>
           <p className="mt-4 text-lg text-muted-foreground leading-relaxed">
             Founded with the vision to bridge the gap between traditional Indian spice farms and your kitchen, 
-            Sadbhaav Spices brings you pure, unadulterated seasonings directly from native origins.
+            spvexport.com brings you pure, unadulterated seasonings directly from native origins.
           </p>
         </div>
 
