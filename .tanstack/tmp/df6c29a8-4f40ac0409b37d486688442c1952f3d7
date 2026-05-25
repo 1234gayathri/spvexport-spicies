@@ -10,7 +10,6 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as QualityRouteImport } from './routes/quality'
-import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ClientRouteImport } from './routes/client'
 import { Route as StoreRouteImport } from './routes/_store'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
@@ -35,11 +34,6 @@ import { Route as StoreProductIdRouteImport } from './routes/_store.product.$id'
 const QualityRoute = QualityRouteImport.update({
   id: '/quality',
   path: '/quality',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContactRoute = ContactRouteImport.update({
-  id: '/contact',
-  path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ClientRoute = ClientRouteImport.update({
@@ -145,7 +139,6 @@ const StoreProductIdRoute = StoreProductIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof StoreIndexRoute
   '/client': typeof ClientRouteWithChildren
-  '/contact': typeof ContactRoute
   '/quality': typeof QualityRoute
   '/about': typeof StoreAboutRoute
   '/account': typeof StoreAccountRoute
@@ -167,7 +160,6 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/client': typeof ClientRouteWithChildren
-  '/contact': typeof ContactRoute
   '/quality': typeof QualityRoute
   '/about': typeof StoreAboutRoute
   '/account': typeof StoreAccountRoute
@@ -192,7 +184,6 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_store': typeof StoreRouteWithChildren
   '/client': typeof ClientRouteWithChildren
-  '/contact': typeof ContactRoute
   '/quality': typeof QualityRoute
   '/_store/about': typeof StoreAboutRoute
   '/_store/account': typeof StoreAccountRoute
@@ -218,7 +209,6 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/client'
-    | '/contact'
     | '/quality'
     | '/about'
     | '/account'
@@ -240,7 +230,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/client'
-    | '/contact'
     | '/quality'
     | '/about'
     | '/account'
@@ -264,7 +253,6 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_store'
     | '/client'
-    | '/contact'
     | '/quality'
     | '/_store/about'
     | '/_store/account'
@@ -289,7 +277,6 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   StoreRoute: typeof StoreRouteWithChildren
   ClientRoute: typeof ClientRouteWithChildren
-  ContactRoute: typeof ContactRoute
   QualityRoute: typeof QualityRoute
   AdminContentRoute: typeof AdminContentRoute
   AdminCustomersRoute: typeof AdminCustomersRoute
@@ -307,13 +294,6 @@ declare module '@tanstack/react-router' {
       path: '/quality'
       fullPath: '/quality'
       preLoaderRoute: typeof QualityRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contact': {
-      id: '/contact'
-      path: '/contact'
-      fullPath: '/contact'
-      preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/client': {
@@ -501,7 +481,6 @@ const ClientRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   StoreRoute: StoreRouteWithChildren,
   ClientRoute: ClientRouteWithChildren,
-  ContactRoute: ContactRoute,
   QualityRoute: QualityRoute,
   AdminContentRoute: AdminContentRoute,
   AdminCustomersRoute: AdminCustomersRoute,

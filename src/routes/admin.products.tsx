@@ -7,10 +7,12 @@ import type { Product } from "@/lib/products";
 
 // ─── Server Functions ──────────────────────────────────────────────────────────
 
-export const getProductsFn = createServerFn({ method: "GET" }).handler(async () => {
-  const { getProducts } = await import("@/lib/db");
-  return await getProducts();
-});
+export const getProductsFn = createServerFn({ method: "GET" }).handler(
+  async () => {
+    const { getProducts } = await import("@/lib/db");
+    return await getProducts();
+  },
+);
 
 export const addProductFn = createServerFn({ method: "POST" })
   .inputValidator((data: Omit<Product, "id">) => data)
@@ -80,7 +82,7 @@ function ProductsPage() {
 
   const handleImageUpload = (
     e: React.ChangeEvent<HTMLInputElement>,
-    setter: (v: string) => void
+    setter: (v: string) => void,
   ) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -91,8 +93,14 @@ function ProductsPage() {
   };
 
   const openAdd = () => {
-    setName(""); setCategory("Turmeric"); setPrice(""); setStock(""); setQuantity("");
-    setDescription(""); setTagline(""); setImage("");
+    setName("");
+    setCategory("Turmeric");
+    setPrice("");
+    setStock("");
+    setQuantity("");
+    setDescription("");
+    setTagline("");
+    setImage("");
     setModal(true);
   };
 
@@ -126,7 +134,9 @@ function ProductsPage() {
     if (!editProduct) return;
     setIsEditSubmitting(true);
     try {
-      await updateProductFn({ data: { id: editProduct.id, updates: editProduct } });
+      await updateProductFn({
+        data: { id: editProduct.id, updates: editProduct },
+      });
       setEditProduct(null);
       await router.invalidate();
     } finally {
@@ -142,7 +152,10 @@ function ProductsPage() {
   };
 
   return (
-    <AdminShell title="Products" subtitle="Manage your catalog, stock and pricing.">
+    <AdminShell
+      title="Products"
+      subtitle="Manage your catalog, stock and pricing."
+    >
       {/* Toolbar */}
       <div className="flex flex-wrap items-center gap-3 mb-5">
         <div className="relative flex-1 max-w-sm">
@@ -195,11 +208,16 @@ function ProductsPage() {
                       src={p.image}
                       alt=""
                       className="h-10 w-10 rounded-lg object-cover"
-                      onError={(e) => { (e.target as HTMLImageElement).src = "https://via.placeholder.com/40"; }}
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src =
+                          "https://via.placeholder.com/40";
+                      }}
                     />
                     <div>
                       <div className="font-semibold">{p.name}</div>
-                      <div className="text-xs text-muted-foreground">{p.tagline}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {p.tagline}
+                      </div>
                     </div>
                   </div>
                 </td>
@@ -212,8 +230,8 @@ function ProductsPage() {
                       p.stock > 50
                         ? "bg-secondary/15 text-secondary"
                         : p.stock > 20
-                        ? "bg-primary/15 text-primary"
-                        : "bg-destructive/15 text-destructive"
+                          ? "bg-primary/15 text-primary"
+                          : "bg-destructive/15 text-destructive"
                     }`}
                   >
                     {p.stock} units
@@ -244,7 +262,10 @@ function ProductsPage() {
             ))}
             {list.length === 0 && (
               <tr>
-                <td colSpan={7} className="px-5 py-10 text-center text-muted-foreground">
+                <td
+                  colSpan={7}
+                  className="px-5 py-10 text-center text-muted-foreground"
+                >
                   No products found.
                 </td>
               </tr>
@@ -257,7 +278,12 @@ function ProductsPage() {
       {modal && (
         <Modal title="Add new product" onClose={() => setModal(false)}>
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Product name" value={name} onChange={(e: any) => setName(e.target.value)} className="sm:col-span-2" />
+            <Field
+              label="Product name"
+              value={name}
+              onChange={(e: any) => setName(e.target.value)}
+              className="sm:col-span-2"
+            />
             <label className="block">
               <span className="text-xs text-muted-foreground">Category</span>
               <select
@@ -270,12 +296,34 @@ function ProductsPage() {
                 <option value="Cardamom">Cardamom</option>
               </select>
             </label>
-            <Field label="Price (₹)" type="number" value={price} onChange={(e: any) => setPrice(e.target.value)} />
-            <Field label="Stock" type="number" value={stock} onChange={(e: any) => setStock(e.target.value)} />
-            <Field label="Quantity" type="text" value={quantity} onChange={(e: any) => setQuantity(e.target.value)} />
-            <Field label="Tagline" value={tagline} onChange={(e: any) => setTagline(e.target.value)} className="sm:col-span-2" />
+            <Field
+              label="Price (₹)"
+              type="number"
+              value={price}
+              onChange={(e: any) => setPrice(e.target.value)}
+            />
+            <Field
+              label="Stock"
+              type="number"
+              value={stock}
+              onChange={(e: any) => setStock(e.target.value)}
+            />
+            <Field
+              label="Quantity"
+              type="text"
+              value={quantity}
+              onChange={(e: any) => setQuantity(e.target.value)}
+            />
+            <Field
+              label="Tagline"
+              value={tagline}
+              onChange={(e: any) => setTagline(e.target.value)}
+              className="sm:col-span-2"
+            />
             <div className="sm:col-span-2">
-              <label className="text-xs text-muted-foreground">Description</label>
+              <label className="text-xs text-muted-foreground">
+                Description
+              </label>
               <textarea
                 rows={3}
                 value={description}
@@ -293,15 +341,27 @@ function ProductsPage() {
                   className="absolute inset-0 cursor-pointer opacity-0"
                 />
                 {image ? (
-                  <img src={image} alt="Preview" className="absolute inset-0 h-full w-full object-cover" />
+                  <img
+                    src={image}
+                    alt="Preview"
+                    className="absolute inset-0 h-full w-full object-cover"
+                  />
                 ) : (
-                  <><ImagePlus className="mr-2 h-5 w-5" /> Click to upload or drag & drop</>
+                  <>
+                    <ImagePlus className="mr-2 h-5 w-5" /> Click to upload or
+                    drag & drop
+                  </>
                 )}
               </div>
             </div>
           </div>
           <div className="mt-6 flex justify-end gap-2">
-            <button onClick={() => setModal(false)} className="rounded-full border px-5 py-2 text-sm font-semibold">Cancel</button>
+            <button
+              onClick={() => setModal(false)}
+              className="rounded-full border px-5 py-2 text-sm font-semibold"
+            >
+              Cancel
+            </button>
             <button
               onClick={handleAddProduct}
               disabled={isSubmitting || !name || !price || !stock}
@@ -320,14 +380,21 @@ function ProductsPage() {
             <Field
               label="Product name"
               value={editProduct.name}
-              onChange={(e: any) => setEditProduct({ ...editProduct, name: e.target.value })}
+              onChange={(e: any) =>
+                setEditProduct({ ...editProduct, name: e.target.value })
+              }
               className="sm:col-span-2"
             />
             <label className="block">
               <span className="text-xs text-muted-foreground">Category</span>
               <select
                 value={editProduct.category}
-                onChange={(e) => setEditProduct({ ...editProduct, category: e.target.value as Product["category"] })}
+                onChange={(e) =>
+                  setEditProduct({
+                    ...editProduct,
+                    category: e.target.value as Product["category"],
+                  })
+                }
                 className="mt-1 w-full rounded-xl border bg-background px-4 py-2.5 text-sm outline-none focus:border-primary"
               >
                 <option value="Turmeric">Turmeric</option>
@@ -339,32 +406,53 @@ function ProductsPage() {
               label="Price (₹)"
               type="number"
               value={String(editProduct.price)}
-              onChange={(e: any) => setEditProduct({ ...editProduct, price: Number(e.target.value) })}
+              onChange={(e: any) =>
+                setEditProduct({
+                  ...editProduct,
+                  price: Number(e.target.value),
+                })
+              }
             />
             <Field
               label="Stock"
               type="number"
               value={String(editProduct.stock)}
-              onChange={(e: any) => setEditProduct({ ...editProduct, stock: Number(e.target.value) })}
+              onChange={(e: any) =>
+                setEditProduct({
+                  ...editProduct,
+                  stock: Number(e.target.value),
+                })
+              }
             />
             <Field
               label="Quantity"
               type="text"
               value={String(editProduct.quantity ?? "")}
-              onChange={(e: any) => setEditProduct({ ...editProduct, quantity: e.target.value })}
+              onChange={(e: any) =>
+                setEditProduct({ ...editProduct, quantity: e.target.value })
+              }
             />
             <Field
               label="Tagline"
               value={editProduct.tagline}
-              onChange={(e: any) => setEditProduct({ ...editProduct, tagline: e.target.value })}
+              onChange={(e: any) =>
+                setEditProduct({ ...editProduct, tagline: e.target.value })
+              }
               className="sm:col-span-2"
             />
             <div className="sm:col-span-2">
-              <label className="text-xs text-muted-foreground">Description</label>
+              <label className="text-xs text-muted-foreground">
+                Description
+              </label>
               <textarea
                 rows={3}
                 value={editProduct.description}
-                onChange={(e) => setEditProduct({ ...editProduct, description: e.target.value })}
+                onChange={(e) =>
+                  setEditProduct({
+                    ...editProduct,
+                    description: e.target.value,
+                  })
+                }
                 className="mt-1 w-full rounded-xl border bg-background px-4 py-2.5 text-sm outline-none focus:border-primary"
               />
             </div>
@@ -374,19 +462,36 @@ function ProductsPage() {
                 <input
                   type="file"
                   accept="image/*"
-                  onChange={(e) => handleImageUpload(e, (v) => setEditProduct((prev) => prev ? { ...prev, image: v } : null))}
+                  onChange={(e) =>
+                    handleImageUpload(e, (v) =>
+                      setEditProduct((prev) =>
+                        prev ? { ...prev, image: v } : null,
+                      ),
+                    )
+                  }
                   className="absolute inset-0 cursor-pointer opacity-0"
                 />
                 {editProduct.image ? (
-                  <img src={editProduct.image} alt="Preview" className="absolute inset-0 h-full w-full object-cover" />
+                  <img
+                    src={editProduct.image}
+                    alt="Preview"
+                    className="absolute inset-0 h-full w-full object-cover"
+                  />
                 ) : (
-                  <><ImagePlus className="mr-2 h-5 w-5" /> Click to change image</>
+                  <>
+                    <ImagePlus className="mr-2 h-5 w-5" /> Click to change image
+                  </>
                 )}
               </div>
             </div>
           </div>
           <div className="mt-6 flex justify-end gap-2">
-            <button onClick={() => setEditProduct(null)} className="rounded-full border px-5 py-2 text-sm font-semibold">Cancel</button>
+            <button
+              onClick={() => setEditProduct(null)}
+              className="rounded-full border px-5 py-2 text-sm font-semibold"
+            >
+              Cancel
+            </button>
             <button
               onClick={handleEditSave}
               disabled={isEditSubmitting}
@@ -404,7 +509,15 @@ function ProductsPage() {
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function Modal({ title, children, onClose }: { title: string; children: React.ReactNode; onClose: () => void }) {
+function Modal({
+  title,
+  children,
+  onClose,
+}: {
+  title: string;
+  children: React.ReactNode;
+  onClose: () => void;
+}) {
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-charcoal/60 backdrop-blur-sm p-4"
@@ -416,7 +529,10 @@ function Modal({ title, children, onClose }: { title: string; children: React.Re
       >
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-display text-2xl font-semibold">{title}</h3>
-          <button onClick={onClose} className="p-1 rounded-lg hover:bg-muted/40">
+          <button
+            onClick={onClose}
+            className="p-1 rounded-lg hover:bg-muted/40"
+          >
             <X className="h-5 w-5" />
           </button>
         </div>

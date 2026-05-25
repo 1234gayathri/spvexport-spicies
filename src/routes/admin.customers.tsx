@@ -6,10 +6,12 @@ import { Mail, Phone, Search } from "lucide-react";
 
 // ─── Server Functions ──────────────────────────────────────────────────────────
 
-export const getCustomersFn = createServerFn({ method: "GET" }).handler(async () => {
-  const { getCustomers } = await import("@/lib/db");
-  return await getCustomers();
-});
+export const getCustomersFn = createServerFn({ method: "GET" }).handler(
+  async () => {
+    const { getCustomers } = await import("@/lib/db");
+    return await getCustomers();
+  },
+);
 
 // ─── Route ────────────────────────────────────────────────────────────────────
 
@@ -28,7 +30,7 @@ function Customers() {
   const list = customers.filter(
     (c) =>
       c.name.toLowerCase().includes(q.toLowerCase()) ||
-      c.email.toLowerCase().includes(q.toLowerCase())
+      c.email.toLowerCase().includes(q.toLowerCase()),
   );
 
   const totalSpent = customers.reduce((s, c) => s + c.spent, 0);
@@ -41,11 +43,19 @@ function Customers() {
         {[
           { label: "Total Customers", value: customers.length },
           { label: "Total Orders", value: totalOrders },
-          { label: "Total Revenue", value: `₹${totalSpent.toLocaleString("en-IN")}` },
+          {
+            label: "Total Revenue",
+            value: `₹${totalSpent.toLocaleString("en-IN")}`,
+          },
         ].map((s) => (
-          <div key={s.label} className="rounded-2xl border bg-card p-4 shadow-soft">
+          <div
+            key={s.label}
+            className="rounded-2xl border bg-card p-4 shadow-soft"
+          >
             <div className="text-xs text-muted-foreground">{s.label}</div>
-            <div className="mt-1 font-display text-2xl font-semibold">{s.value}</div>
+            <div className="mt-1 font-display text-2xl font-semibold">
+              {s.value}
+            </div>
           </div>
         ))}
       </div>
@@ -64,14 +74,22 @@ function Customers() {
       {/* Customer cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {list.map((c) => (
-          <div key={c.email} className="rounded-2xl border bg-card p-5 shadow-soft">
+          <div
+            key={c.email}
+            className="rounded-2xl border bg-card p-5 shadow-soft"
+          >
             <div className="flex items-center gap-3">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-warm font-display text-lg font-bold text-primary-foreground">
-                {c.name.split(" ").map((x) => x[0]).join("")}
+                {c.name
+                  .split(" ")
+                  .map((x) => x[0])
+                  .join("")}
               </div>
               <div className="min-w-0">
                 <div className="font-semibold truncate">{c.name}</div>
-                <div className="text-xs text-muted-foreground truncate">{c.email}</div>
+                <div className="text-xs text-muted-foreground truncate">
+                  {c.email}
+                </div>
               </div>
             </div>
 
@@ -80,7 +98,9 @@ function Customers() {
             <div className="mt-4 grid grid-cols-2 gap-3 text-xs">
               <div className="rounded-xl bg-muted/40 p-3">
                 <div className="text-muted-foreground">Orders</div>
-                <div className="mt-1 font-display text-lg font-semibold">{c.orders}</div>
+                <div className="mt-1 font-display text-lg font-semibold">
+                  {c.orders}
+                </div>
               </div>
               <div className="rounded-xl bg-muted/40 p-3">
                 <div className="text-muted-foreground">Spent</div>
@@ -107,7 +127,9 @@ function Customers() {
           </div>
         ))}
         {list.length === 0 && (
-          <p className="col-span-3 py-10 text-center text-muted-foreground">No customers found.</p>
+          <p className="col-span-3 py-10 text-center text-muted-foreground">
+            No customers found.
+          </p>
         )}
       </div>
     </AdminShell>

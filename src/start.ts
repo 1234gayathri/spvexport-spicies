@@ -5,10 +5,13 @@ import { createStart, createMiddleware } from "@tanstack/react-start";
 if (typeof window === "undefined") {
   try {
     const [{ readFileSync }, { parse }] = await Promise.all([
-      import('node:fs'),
-      import('dotenv'),
+      import("node:fs"),
+      import("dotenv"),
     ]);
-    const raw = readFileSync(new URL('../.env', import.meta.url), 'utf16le').toString();
+    const raw = readFileSync(
+      new URL("../.env", import.meta.url),
+      "utf16le",
+    ).toString();
     const parsed = parse(raw);
     Object.assign(process.env, parsed);
   } catch {

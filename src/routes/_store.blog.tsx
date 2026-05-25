@@ -15,7 +15,7 @@ import cert15 from "@/assets/15.png";
 import cert16 from "@/assets/16.png";
 import cert17 from "@/assets/17.png";
 import cert19 from "@/assets/19.png";
-import cert20 from "@/assets/20.png";
+
 
 export const Route = createFileRoute("/_store/blog")({
   component: BlogPage,
@@ -29,7 +29,8 @@ const blogPosts = [
     date: new Date("2026-05-04"),
     comments: 0,
     image: turmericImg,
-    excerpt: "Discover why our Organic Turmeric Powder is the go-to spice for daily cooking, wellness teas, and bright, nourishing curries."
+    excerpt:
+      "Discover why our Organic Turmeric Powder is the go-to spice for daily cooking, wellness teas, and bright, nourishing curries.",
   },
   {
     id: 2,
@@ -37,7 +38,8 @@ const blogPosts = [
     date: new Date("2026-05-03"),
     comments: 0,
     image: heroSpicesImg,
-    excerpt: "Whole turmeric fingers deliver fresher aroma and deeper color when ground just before use, making every curry and golden milk more vibrant."
+    excerpt:
+      "Whole turmeric fingers deliver fresher aroma and deeper color when ground just before use, making every curry and golden milk more vibrant.",
   },
   {
     id: 3,
@@ -45,7 +47,8 @@ const blogPosts = [
     date: new Date("2026-05-02"),
     comments: 0,
     image: cardamomImg,
-    excerpt: "Hand-sorted cardamom pods add floral warmth and sweetness to sweets, chai, and rich savory sauces."
+    excerpt:
+      "Hand-sorted cardamom pods add floral warmth and sweetness to sweets, chai, and rich savory sauces.",
   },
   {
     id: 4,
@@ -53,7 +56,8 @@ const blogPosts = [
     date: new Date("2026-04-28"),
     comments: 0,
     image: image1,
-    excerpt: "Our premium Kashmiri chilli powder brings deep red color, smoky notes, and gentle heat to every simmering pot."
+    excerpt:
+      "Our premium Kashmiri chilli powder brings deep red color, smoky notes, and gentle heat to every simmering pot.",
   },
   {
     id: 5,
@@ -61,7 +65,8 @@ const blogPosts = [
     date: new Date("2026-04-25"),
     comments: 0,
     image: image2,
-    excerpt: "A vivid stack of turmeric, chilli and spice powders shows why these three are the foundation of every aromatic Indian pantry."
+    excerpt:
+      "A vivid stack of turmeric, chilli and spice powders shows why these three are the foundation of every aromatic Indian pantry.",
   },
   {
     id: 6,
@@ -69,7 +74,8 @@ const blogPosts = [
     date: new Date("2026-04-22"),
     comments: 0,
     image: image3,
-    excerpt: "Organize and preserve your whole spices with the right storage so the aroma lasts from the first pinch to the last."
+    excerpt:
+      "Organize and preserve your whole spices with the right storage so the aroma lasts from the first pinch to the last.",
   },
 ];
 
@@ -86,7 +92,10 @@ function BlogPage() {
         <div className="absolute inset-0 bg-slate-950/40" />
         <div className="relative mx-auto max-w-7xl px-6 text-center">
           <h1 className="text-4xl font-bold text-blue-100">Our Blog</h1>
-          <p className="mt-2 text-blue-100/80">Stories, recipes, and product tips for turmeric, chilli, and cardamom lovers.</p>
+          <p className="mt-2 text-blue-100/80">
+            Stories, recipes, and product tips for turmeric, chilli, and
+            cardamom lovers.
+          </p>
         </div>
       </div>
 
@@ -94,7 +103,10 @@ function BlogPage() {
       <div className="mx-auto max-w-7xl px-6 py-16">
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {blogPosts.map((post) => (
-            <article key={post.id} className="group overflow-hidden rounded-lg border bg-card shadow-sm transition hover:shadow-md">
+            <article
+              key={post.id}
+              className="group overflow-hidden rounded-lg border bg-card shadow-sm transition hover:shadow-md"
+            >
               {/* Image */}
               <div className="relative h-48 w-full overflow-hidden bg-muted">
                 <img
@@ -140,36 +152,69 @@ function BlogPage() {
       <div className="bg-slate-50 py-16">
         <div className="mx-auto max-w-7xl px-6">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-blue-700">Our Certificates</h2>
-            <p className="mt-2 text-muted-foreground">Certified quality and authenticity for our premium spices</p>
+            <h2 className="text-3xl font-bold text-blue-700">
+              Our Certificates
+            </h2>
+            <p className="mt-2 text-muted-foreground">
+              Certified quality and authenticity for our premium spices
+            </p>
           </div>
           <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
-            <div className="overflow-hidden rounded-3xl bg-white shadow-sm transition hover:shadow-lg">
-              <img src={cert11} alt="Certificate 11" className="h-56 w-full object-cover" />
+            <div className="overflow-hidden rounded-none bg-white shadow-sm transition hover:shadow-lg">
+              <img
+                src={cert11}
+                alt="Certificate 11"
+                className="h-56 w-full object-cover"
+              />
             </div>
-            <div className="overflow-hidden rounded-3xl bg-white shadow-sm transition hover:shadow-lg">
-              <img src={cert12} alt="Certificate 12" className="h-56 w-full object-cover" />
+            <div className="overflow-hidden rounded-none bg-white shadow-sm transition hover:shadow-lg">
+              <img
+                src={cert12}
+                alt="Certificate 12"
+                className="h-56 w-full object-cover"
+              />
             </div>
-            <div className="overflow-hidden rounded-3xl bg-white shadow-sm transition hover:shadow-lg">
-              <img src={cert13} alt="Certificate 13" className="h-56 w-full object-cover" />
+            <div className="overflow-hidden rounded-none bg-white shadow-sm transition hover:shadow-lg">
+              <img
+                src={cert13}
+                alt="Certificate 13"
+                className="h-56 w-full object-cover"
+              />
             </div>
-            <div className="overflow-hidden rounded-3xl bg-white shadow-sm transition hover:shadow-lg">
-              <img src={cert14} alt="Certificate 14" className="h-56 w-full object-cover" />
+            <div className="overflow-hidden rounded-none bg-white shadow-sm transition hover:shadow-lg">
+              <img
+                src={cert14}
+                alt="Certificate 14"
+                className="h-56 w-full object-cover"
+              />
             </div>
-            <div className="overflow-hidden rounded-3xl bg-white shadow-sm transition hover:shadow-lg">
-              <img src={cert15} alt="Certificate 15" className="h-56 w-full object-cover" />
+            <div className="overflow-hidden rounded-none bg-white shadow-sm transition hover:shadow-lg">
+              <img
+                src={cert15}
+                alt="Certificate 15"
+                className="h-56 w-full object-cover"
+              />
             </div>
-            <div className="overflow-hidden rounded-3xl bg-white shadow-sm transition hover:shadow-lg">
-              <img src={cert16} alt="Certificate 16" className="h-56 w-full object-cover" />
+            <div className="overflow-hidden rounded-none bg-white shadow-sm transition hover:shadow-lg">
+              <img
+                src={cert16}
+                alt="Certificate 16"
+                className="h-56 w-full object-cover"
+              />
             </div>
-            <div className="overflow-hidden rounded-3xl bg-white shadow-sm transition hover:shadow-lg">
-              <img src={cert17} alt="Certificate 17" className="h-56 w-full object-cover" />
+            <div className="overflow-hidden rounded-none bg-white shadow-sm transition hover:shadow-lg">
+              <img
+                src={cert17}
+                alt="Certificate 17"
+                className="h-56 w-full object-cover"
+              />
             </div>
-            <div className="overflow-hidden rounded-3xl bg-white shadow-sm transition hover:shadow-lg">
-              <img src={cert19} alt="Certificate 19" className="h-56 w-full object-cover" />
-            </div>
-            <div className="overflow-hidden rounded-3xl bg-white shadow-sm transition hover:shadow-lg">
-              <img src={cert20} alt="Certificate 20" className="h-56 w-full object-cover" />
+            <div className="overflow-hidden rounded-none bg-white shadow-sm transition hover:shadow-lg">
+              <img
+                src={cert19}
+                alt="Certificate 19"
+                className="h-56 w-full object-cover"
+              />
             </div>
           </div>
         </div>

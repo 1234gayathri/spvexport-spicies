@@ -202,7 +202,9 @@ export async function getProducts(): Promise<Product[]> {
   return (await readDb()).products;
 }
 
-export async function addProduct(product: Omit<Product, "id">): Promise<Product> {
+export async function addProduct(
+  product: Omit<Product, "id">,
+): Promise<Product> {
   const db = await readDb();
   const newProduct: Product = { ...product, id: `prod-${Date.now()}` };
   db.products = [newProduct, ...db.products];
@@ -210,7 +212,10 @@ export async function addProduct(product: Omit<Product, "id">): Promise<Product>
   return newProduct;
 }
 
-export async function updateProduct(id: string, updates: Partial<Product>): Promise<Product | null> {
+export async function updateProduct(
+  id: string,
+  updates: Partial<Product>,
+): Promise<Product | null> {
   const db = await readDb();
   const idx = db.products.findIndex((p) => p.id === id);
   if (idx === -1) return null;
@@ -233,7 +238,10 @@ export async function getOrders(): Promise<Order[]> {
   return (await readDb()).orders;
 }
 
-export async function updateOrderStatus(id: string, status: string): Promise<Order | null> {
+export async function updateOrderStatus(
+  id: string,
+  status: string,
+): Promise<Order | null> {
   const db = await readDb();
   const idx = db.orders.findIndex((o) => o.id === id);
   if (idx === -1) return null;
@@ -265,7 +273,9 @@ export async function getCoupons(): Promise<Coupon[]> {
   return db.coupons;
 }
 
-export async function addCoupon(coupon: Omit<Coupon, "uses" | "active">): Promise<Coupon> {
+export async function addCoupon(
+  coupon: Omit<Coupon, "uses" | "active">,
+): Promise<Coupon> {
   const db = await readDb();
   const newCoupon: Coupon = { ...coupon, uses: 0, active: true };
   db.coupons = [newCoupon, ...db.coupons];
@@ -309,7 +319,9 @@ export async function getTestimonials(): Promise<Testimonial[]> {
   return (await readDb()).testimonials;
 }
 
-export async function addTestimonial(testimonial: Omit<Testimonial, "id">): Promise<Testimonial> {
+export async function addTestimonial(
+  testimonial: Omit<Testimonial, "id">,
+): Promise<Testimonial> {
   const db = await readDb();
   const newTestimonial: Testimonial = { ...testimonial, id: `t-${Date.now()}` };
   db.testimonials = [...db.testimonials, newTestimonial];
@@ -331,7 +343,9 @@ export async function getSettings(): Promise<StoreSettings> {
   return (await readDb()).settings;
 }
 
-export async function updateSettings(updates: Partial<StoreSettings>): Promise<StoreSettings> {
+export async function updateSettings(
+  updates: Partial<StoreSettings>,
+): Promise<StoreSettings> {
   const db = await readDb();
   db.settings = { ...db.settings, ...updates };
   await writeDb(db);
@@ -351,7 +365,11 @@ export async function getDashboardStats() {
     .slice(0, 4);
 
   // Generate activities dynamically from actual data
-  const activities: { t: string; w: string; c: "primary" | "accent" | "secondary" | "destructive" }[] = [];
+  const activities: {
+    t: string;
+    w: string;
+    c: "primary" | "accent" | "secondary" | "destructive";
+  }[] = [];
 
   // 1. Live Orders (up to 3)
   db.orders.slice(0, 3).forEach((o, i) => {
@@ -363,22 +381,28 @@ export async function getDashboardStats() {
   });
 
   // 2. Low Stock warnings (up to 2)
-  db.products.filter((p) => p.stock < 20).slice(0, 2).forEach((p) => {
-    activities.push({
-      t: `${p.name} stock low (${p.stock} left)`,
-      w: "recently",
-      c: "accent",
+  db.products
+    .filter((p) => p.stock < 20)
+    .slice(0, 2)
+    .forEach((p) => {
+      activities.push({
+        t: `${p.name} stock low (${p.stock} left)`,
+        w: "recently",
+        c: "accent",
+      });
     });
-  });
 
   // 3. Active Coupon usage (up to 2)
-  db.coupons.filter((c) => c.active && c.uses > 0).slice(0, 2).forEach((c) => {
-    activities.push({
-      t: `Coupon ${c.code} used ${c.uses}×`,
-      w: "today",
-      c: "secondary",
+  db.coupons
+    .filter((c) => c.active && c.uses > 0)
+    .slice(0, 2)
+    .forEach((c) => {
+      activities.push({
+        t: `Coupon ${c.code} used ${c.uses}×`,
+        w: "today",
+        c: "secondary",
+      });
     });
-  });
 
   // Fallback if no activities exist
   if (activities.length === 0) {
@@ -389,26 +413,47 @@ export async function getDashboardStats() {
     });
   }
 
-  return { totalRevenue, totalOrders, totalCustomers, avgOrder, recentOrders, topProducts, activities };
+  return {
+    totalRevenue,
+    totalOrders,
+    totalCustomers,
+    avgOrder,
+    recentOrders,
+    topProducts,
+    activities,
+  };
 }
 
 export async function addOrder(
   order: Omit<Order, "id" | "date" | "status">,
-  purchasedItems?: { id: string; qty: number }[]
+  purchasedItems?: { id: string; qty: number }[],
 ): Promise<Order> {
   const db = await readDb();
-  
-  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
   const now = new Date();
   const dateStr = `${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
-  
+
   const newOrder: Order = {
     ...order,
     id: `SB-${1000 + db.orders.length + 1}`,
     date: dateStr,
     status: "Pending",
   };
-  
+
   db.orders = [newOrder, ...db.orders];
 
   // Decrement stock levels
@@ -420,9 +465,11 @@ export async function addOrder(
       }
     });
   }
-  
+
   // Update or register Customer profile
-  const custIdx = db.customers.findIndex((c) => c.email.toLowerCase() === (order.email || "").toLowerCase());
+  const custIdx = db.customers.findIndex(
+    (c) => c.email.toLowerCase() === (order.email || "").toLowerCase(),
+  );
   if (custIdx !== -1) {
     db.customers[custIdx].orders += 1;
     db.customers[custIdx].spent += order.total;
@@ -435,14 +482,16 @@ export async function addOrder(
       spent: order.total,
     });
   }
-  
+
   await writeDb(db);
   return newOrder;
 }
 
 export async function incrementCouponUses(code: string): Promise<boolean> {
   const db = await readDb();
-  const idx = db.coupons.findIndex((c) => c.code.toUpperCase() === code.toUpperCase());
+  const idx = db.coupons.findIndex(
+    (c) => c.code.toUpperCase() === code.toUpperCase(),
+  );
   if (idx === -1) return false;
   db.coupons[idx].uses += 1;
   await writeDb(db);
@@ -459,7 +508,7 @@ export async function saveOrderToDb(
   customer: { name: string; email: string; phone?: string; address?: string },
   items: { productId: string; quantity: number; price: number }[],
   total: number,
-  status: string = 'pending'
+  status: string = "pending",
 ): Promise<{ id: string }> {
   try {
     const order = await prisma.order.create({
@@ -489,7 +538,7 @@ export async function saveOrderToDb(
     });
     return { id: order.id };
   } catch (error) {
-    console.error('[Prisma] Error saving order:', error);
+    console.error("[Prisma] Error saving order:", error);
     throw error;
   }
 }
@@ -510,7 +559,7 @@ export async function saveProductToDb(product: {
     });
     return { id: saved.id };
   } catch (error) {
-    console.error('[Prisma] Error saving product:', error);
+    console.error("[Prisma] Error saving product:", error);
     throw error;
   }
 }
@@ -520,7 +569,13 @@ export async function saveProductToDb(product: {
  */
 export async function updateProductInDb(
   id: string,
-  updates: { name?: string; price?: number; stock?: number; image?: string; description?: string }
+  updates: {
+    name?: string;
+    price?: number;
+    stock?: number;
+    image?: string;
+    description?: string;
+  },
 ): Promise<{ id: string }> {
   try {
     const updated = await prisma.product.update({
@@ -529,7 +584,7 @@ export async function updateProductInDb(
     });
     return { id: updated.id };
   } catch (error) {
-    console.error('[Prisma] Error updating product:', error);
+    console.error("[Prisma] Error updating product:", error);
     throw error;
   }
 }
@@ -541,7 +596,7 @@ export async function getProductsFromDb(): Promise<any[]> {
   try {
     return await prisma.product.findMany();
   } catch (error) {
-    console.error('[Prisma] Error fetching products:', error);
+    console.error("[Prisma] Error fetching products:", error);
     return [];
   }
 }
@@ -552,7 +607,7 @@ export async function getProductsFromDb(): Promise<any[]> {
 export async function saveCartItemToDb(
   customerId: string,
   productId: string,
-  quantity: number
+  quantity: number,
 ): Promise<{ id: string }> {
   try {
     // First, ensure customer exists
@@ -589,7 +644,7 @@ export async function saveCartItemToDb(
 
     return { id: cartItem.id };
   } catch (error) {
-    console.error('[Prisma] Error saving cart item:', error);
+    console.error("[Prisma] Error saving cart item:", error);
     throw error;
   }
 }
@@ -605,7 +660,7 @@ export async function getCartItemsFromDb(customerId: string): Promise<any[]> {
     });
     return cart?.items || [];
   } catch (error) {
-    console.error('[Prisma] Error fetching cart items:', error);
+    console.error("[Prisma] Error fetching cart items:", error);
     return [];
   }
 }
@@ -624,7 +679,7 @@ export async function clearCartFromDb(customerId: string): Promise<void> {
       });
     }
   } catch (error) {
-    console.error('[Prisma] Error clearing cart:', error);
+    console.error("[Prisma] Error clearing cart:", error);
     throw error;
   }
 }
@@ -644,8 +699,7 @@ export async function getOrdersFromDb(customerId?: string): Promise<any[]> {
       include: { items: { include: { product: true } } },
     });
   } catch (error) {
-    console.error('[Prisma] Error fetching orders:', error);
+    console.error("[Prisma] Error fetching orders:", error);
     return [];
   }
 }
-

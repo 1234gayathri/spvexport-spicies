@@ -5,7 +5,9 @@ import { toast } from "sonner";
 
 export const Route = createFileRoute("/_store/profile")({
   component: ProfilePage,
-  head: () => ({ meta: [{ title: "Complete Your Profile — Sadbhaav Spices" }] }),
+  head: () => ({
+    meta: [{ title: "Complete Your Profile — Sadbhaav Spices" }],
+  }),
 });
 
 function ProfilePage() {
@@ -51,7 +53,13 @@ function ProfilePage() {
 
     setIsSaving(true);
     try {
-      const profile = { name, email, phone, address, completedAt: new Date().toISOString() };
+      const profile = {
+        name,
+        email,
+        phone,
+        address,
+        completedAt: new Date().toISOString(),
+      };
       localStorage.setItem("customerProfile", JSON.stringify(profile));
       toast.success("Profile saved successfully!");
       setTimeout(() => {
@@ -67,9 +75,16 @@ function ProfilePage() {
   return (
     <div className="mx-auto max-w-5xl px-6 py-12">
       <div className="flex flex-col gap-2 mb-12">
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">Complete Your Profile</p>
-        <h1 className="font-display text-4xl font-semibold sm:text-5xl">Delivery Information</h1>
-        <p className="text-muted-foreground">We need your details to deliver your order safely. You can update this anytime before ordering.</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+          Complete Your Profile
+        </p>
+        <h1 className="font-display text-4xl font-semibold sm:text-5xl">
+          Delivery Information
+        </h1>
+        <p className="text-muted-foreground">
+          We need your details to deliver your order safely. You can update this
+          anytime before ordering.
+        </p>
       </div>
 
       <div className="max-w-2xl mx-auto">

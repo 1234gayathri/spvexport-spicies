@@ -2,7 +2,7 @@ services:
   - type: web
     name: sadbhaav-spices
     runtime: node
-    buildCommand: npm install && npm run build
+    buildCommand: npm install && npx prisma migrate deploy && npm run build
     startCommand: node dist/server/server.js
     envVars:
       - key: NODE_ENV

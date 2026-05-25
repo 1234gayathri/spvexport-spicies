@@ -77,7 +77,8 @@ export const products: Product[] = [
     rating: 4.7,
     reviews: 318,
     image: turmericImg,
-    description: "Whole sun-dried turmeric fingers. Grind fresh at home for unmatched aroma.",
+    description:
+      "Whole sun-dried turmeric fingers. Grind fresh at home for unmatched aroma.",
     ingredients: ["100% Organic Turmeric Rhizome"],
     stock: 47,
   },
@@ -90,7 +91,8 @@ export const products: Product[] = [
     rating: 4.6,
     reviews: 456,
     image: chilliImg,
-    description: "Fiery, smoky Guntur Sannam chillies — the soul of Andhra cuisine.",
+    description:
+      "Fiery, smoky Guntur Sannam chillies — the soul of Andhra cuisine.",
     ingredients: ["100% Organic Guntur Chillies"],
     stock: 92,
   },
@@ -103,7 +105,8 @@ export const products: Product[] = [
     rating: 4.85,
     reviews: 204,
     image: cardamomImg,
-    description: "Freshly milled green cardamom powder — perfect for chai, desserts, and bakes.",
+    description:
+      "Freshly milled green cardamom powder — perfect for chai, desserts, and bakes.",
     ingredients: ["100% Organic Green Cardamom"],
     stock: 31,
   },

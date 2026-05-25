@@ -1,13 +1,22 @@
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
 import { createServerFn } from "@tanstack/react-start";
 import { products, type Product } from "./products";
 
 // ─── Server Functions ──────────────────────────────────────────────────────────
 
-export const getDbProductsFn = createServerFn({ method: "GET" }).handler(async () => {
-  const { getProducts } = await import("./db");
-  return getProducts();
-});
+export const getDbProductsFn = createServerFn({ method: "GET" }).handler(
+  async () => {
+    const { getProducts } = await import("./db");
+    return getProducts();
+  },
+);
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -72,7 +81,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const resolved: CartItem[] = items
       .map((i) => {
         // Resolve using live database products if loaded, fallback to static seed list
-        const p = dbProducts.find((x) => x.id === i.id) || products.find((x) => x.id === i.id);
+        const p =
+          dbProducts.find((x) => x.id === i.id) ||
+          products.find((x) => x.id === i.id);
         return p ? { product: p, qty: i.qty } : null;
       })
       .filter(Boolean) as CartItem[];
@@ -83,17 +94,24 @@ export function CartProvider({ children }: { children: ReactNode }) {
       add: (id, qty = 1) =>
         setItems((cur) => {
           const f = cur.find((c) => c.id === id);
-          if (f) return cur.map((c) => (c.id === id ? { ...c, qty: c.qty + qty } : c));
+          if (f)
+            return cur.map((c) =>
+              c.id === id ? { ...c, qty: c.qty + qty } : c,
+            );
           return [...cur, { id, qty }];
         }),
       remove: (id) => setItems((cur) => cur.filter((c) => c.id !== id)),
       setQty: (id, qty) =>
         setItems((cur) =>
-          qty <= 0 ? cur.filter((c) => c.id !== id) : cur.map((c) => (c.id === id ? { ...c, qty } : c))
+          qty <= 0
+            ? cur.filter((c) => c.id !== id)
+            : cur.map((c) => (c.id === id ? { ...c, qty } : c)),
         ),
       clear: () => setItems([]),
       toggleWish: (id) =>
-        setWish((w) => (w.includes(id) ? w.filter((x) => x !== id) : [...w, id])),
+        setWish((w) =>
+          w.includes(id) ? w.filter((x) => x !== id) : [...w, id],
+        ),
       count: resolved.reduce((s, i) => s + i.qty, 0),
       subtotal: resolved.reduce((s, i) => s + i.qty * i.product.price, 0),
     };

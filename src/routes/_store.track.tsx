@@ -1,7 +1,17 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { useState } from "react";
-import { Search, Package, MapPin, Calendar, Clock, CheckCircle2, ArrowRight, Loader2, AlertCircle } from "lucide-react";
+import {
+  Search,
+  Package,
+  MapPin,
+  Calendar,
+  Clock,
+  CheckCircle2,
+  ArrowRight,
+  Loader2,
+  AlertCircle,
+} from "lucide-react";
 import { toast } from "sonner";
 
 // ─── Server Function ──────────────────────────────────────────────────────────
@@ -73,10 +83,16 @@ function TrackPage() {
   return (
     <div className="mx-auto max-w-4xl px-6 py-12">
       <div className="flex flex-col gap-2 text-center max-w-xl mx-auto mb-10">
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">Order Tracking</p>
-        <h1 className="font-display text-4xl font-semibold sm:text-5xl">Track Your Spice Trail</h1>
+        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+          Order Tracking
+        </p>
+        <h1 className="font-display text-4xl font-semibold sm:text-5xl">
+          Track Your Spice Trail
+        </h1>
         <p className="text-muted-foreground">
-          Enter your unique Order ID (e.g. <span className="font-mono font-semibold">SB-1042</span>) to see its live shipping status.
+          Enter your unique Order ID (e.g.{" "}
+          <span className="font-mono font-semibold">SB-1042</span>) to see its
+          live shipping status.
         </p>
       </div>
 
@@ -110,9 +126,16 @@ function TrackPage() {
           <div className="h-12 w-12 bg-destructive/10 text-destructive rounded-full flex items-center justify-center mb-4">
             <AlertCircle className="h-6 w-6" />
           </div>
-          <h2 className="font-display text-xl font-semibold">Order Not Found</h2>
+          <h2 className="font-display text-xl font-semibold">
+            Order Not Found
+          </h2>
           <p className="mt-2 text-muted-foreground text-xs px-6">
-            We couldn't find an order matching <span className="font-mono font-semibold">{orderIdInput.toUpperCase()}</span>. Please verify your receipt or check your profile for order details.
+            We couldn't find an order matching{" "}
+            <span className="font-mono font-semibold">
+              {orderIdInput.toUpperCase()}
+            </span>
+            . Please verify your receipt or check your profile for order
+            details.
           </p>
           <Link
             to="/profile"
@@ -129,8 +152,12 @@ function TrackPage() {
           <div className="rounded-3xl border bg-card p-6 sm:p-8 shadow-soft">
             <div className="flex flex-wrap items-center justify-between gap-4 border-b pb-4 mb-6">
               <div>
-                <span className="text-xs text-muted-foreground">Order Reference</span>
-                <h3 className="font-mono text-xl font-bold text-foreground mt-0.5">{order.id}</h3>
+                <span className="text-xs text-muted-foreground">
+                  Order Reference
+                </span>
+                <h3 className="font-mono text-xl font-bold text-foreground mt-0.5">
+                  {order.id}
+                </h3>
               </div>
               <div className="text-right">
                 <span className="text-xs text-muted-foreground">Status</span>
@@ -140,10 +167,11 @@ function TrackPage() {
                       order.status === "Delivered"
                         ? "bg-emerald-100 text-emerald-800"
                         : order.status === "Cancelled"
-                        ? "bg-red-100 text-red-800"
-                        : order.status === "Processing" || order.status === "Shipped"
-                        ? "bg-blue-100 text-blue-800"
-                        : "bg-amber-100 text-amber-800"
+                          ? "bg-red-100 text-red-800"
+                          : order.status === "Processing" ||
+                              order.status === "Shipped"
+                            ? "bg-blue-100 text-blue-800"
+                            : "bg-amber-100 text-amber-800"
                     }`}
                   >
                     {order.status}
@@ -156,9 +184,12 @@ function TrackPage() {
               <div className="rounded-2xl bg-destructive/5 border border-destructive/20 p-4 flex gap-3 items-start">
                 <AlertCircle className="h-5 w-5 text-destructive mt-0.5" />
                 <div>
-                  <div className="text-sm font-semibold text-destructive">This order was cancelled</div>
+                  <div className="text-sm font-semibold text-destructive">
+                    This order was cancelled
+                  </div>
                   <div className="text-xs text-muted-foreground mt-0.5">
-                    If this is a mistake or you have questions, please reach out to our customer support.
+                    If this is a mistake or you have questions, please reach out
+                    to our customer support.
                   </div>
                 </div>
               </div>
@@ -172,7 +203,10 @@ function TrackPage() {
                     const isCurrent = idx === stepIndex;
 
                     return (
-                      <div key={s.label} className="flex sm:flex-col items-start sm:items-center gap-4 sm:gap-2 text-left sm:text-center">
+                      <div
+                        key={s.label}
+                        className="flex sm:flex-col items-start sm:items-center gap-4 sm:gap-2 text-left sm:text-center"
+                      >
                         <div
                           className={`h-8 w-8 rounded-full border-2 flex items-center justify-center font-bold text-xs bg-background transition duration-300 ${
                             isCompleted
@@ -180,13 +214,21 @@ function TrackPage() {
                               : "border-muted text-muted-foreground"
                           } ${isCurrent ? "ring-4 ring-primary/10 scale-110" : ""}`}
                         >
-                          {isCompleted ? <CheckCircle2 className="h-4 w-4" /> : idx + 1}
+                          {isCompleted ? (
+                            <CheckCircle2 className="h-4 w-4" />
+                          ) : (
+                            idx + 1
+                          )}
                         </div>
                         <div>
-                          <h4 className={`text-sm font-semibold ${isCompleted ? "text-foreground" : "text-muted-foreground"}`}>
+                          <h4
+                            className={`text-sm font-semibold ${isCompleted ? "text-foreground" : "text-muted-foreground"}`}
+                          >
                             {s.label}
                           </h4>
-                          <p className="text-[11px] text-muted-foreground leading-tight mt-0.5">{s.desc}</p>
+                          <p className="text-[11px] text-muted-foreground leading-tight mt-0.5">
+                            {s.desc}
+                          </p>
                         </div>
                       </div>
                     );
@@ -205,13 +247,21 @@ function TrackPage() {
               </h3>
               <div className="grid gap-3 text-xs leading-relaxed">
                 <div>
-                  <span className="text-muted-foreground block">Customer Name</span>
-                  <span className="font-semibold text-foreground">{order.customer}</span>
+                  <span className="text-muted-foreground block">
+                    Customer Name
+                  </span>
+                  <span className="font-semibold text-foreground">
+                    {order.customer}
+                  </span>
                 </div>
                 {order.phone && (
                   <div>
-                    <span className="text-muted-foreground block">Contact Number</span>
-                    <span className="font-semibold text-foreground">{order.phone}</span>
+                    <span className="text-muted-foreground block">
+                      Contact Number
+                    </span>
+                    <span className="font-semibold text-foreground">
+                      {order.phone}
+                    </span>
                   </div>
                 )}
                 {order.address && (
@@ -219,7 +269,9 @@ function TrackPage() {
                     <span className="text-muted-foreground block flex items-center gap-1">
                       <MapPin className="h-3.5 w-3.5" /> Delivery Address
                     </span>
-                    <span className="font-semibold text-foreground block mt-0.5">{order.address}</span>
+                    <span className="font-semibold text-foreground block mt-0.5">
+                      {order.address}
+                    </span>
                   </div>
                 )}
               </div>
@@ -235,24 +287,36 @@ function TrackPage() {
                   <span className="text-muted-foreground flex items-center gap-1">
                     <Calendar className="h-3.5 w-3.5" /> Date Placed
                   </span>
-                  <span className="font-semibold text-foreground">{order.date}</span>
+                  <span className="font-semibold text-foreground">
+                    {order.date}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">Total Purchased Items</span>
+                  <span className="text-muted-foreground">
+                    Total Purchased Items
+                  </span>
                   <span className="font-semibold text-foreground">
                     {order.items} {order.items === 1 ? "item" : "items"}
                   </span>
                 </div>
                 {order.paymentMethod && (
                   <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground">Payment Method</span>
-                    <span className="font-semibold text-foreground uppercase">{order.paymentMethod}</span>
+                    <span className="text-muted-foreground">
+                      Payment Method
+                    </span>
+                    <span className="font-semibold text-foreground uppercase">
+                      {order.paymentMethod}
+                    </span>
                   </div>
                 )}
                 <hr className="my-1" />
                 <div className="flex items-center justify-between text-sm">
-                  <span className="font-semibold text-foreground">Amount Paid</span>
-                  <span className="font-display font-bold text-lg text-primary">₹{order.total}</span>
+                  <span className="font-semibold text-foreground">
+                    Amount Paid
+                  </span>
+                  <span className="font-display font-bold text-lg text-primary">
+                    ₹{order.total}
+                  </span>
                 </div>
               </div>
             </div>

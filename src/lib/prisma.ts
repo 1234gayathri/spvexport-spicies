@@ -1,14 +1,16 @@
 let _prisma: any = null;
 
 export async function getPrisma() {
-  if (typeof window !== 'undefined') throw new Error('Prisma must run on the server');
+  if (typeof window !== "undefined")
+    throw new Error("Prisma must run on the server");
   if (_prisma) return _prisma;
   try {
-    const prismaModule = await import('@prisma/client') as any;
-    const PrismaClient = prismaModule.PrismaClient || prismaModule.default?.PrismaClient;
+    const prismaModule = (await import("@prisma/client")) as any;
+    const PrismaClient =
+      prismaModule.PrismaClient || prismaModule.default?.PrismaClient;
     _prisma = new PrismaClient();
   } catch (e) {
-    console.error('Prisma initialization failed:', e);
+    console.error("Prisma initialization failed:", e);
     _prisma = getMockPrisma();
   }
   return _prisma;
@@ -16,11 +18,22 @@ export async function getPrisma() {
 
 function getMockPrisma(): any {
   return {
-    order: { create: async () => ({ id: 'mock' }), findMany: async () => [] },
-    product: { create: async () => ({ id: 'mock' }), findMany: async () => [], update: async () => ({ id: 'mock' }), findUnique: async () => null },
+    order: { create: async () => ({ id: "mock" }), findMany: async () => [] },
+    product: {
+      create: async () => ({ id: "mock" }),
+      findMany: async () => [],
+      update: async () => ({ id: "mock" }),
+      findUnique: async () => null,
+    },
     customer: { findUnique: async () => null },
-    cart: { findUnique: async () => null, create: async () => ({ id: 'mock' }) },
-    cartItem: { upsert: async () => ({ id: 'mock' }), deleteMany: async () => ({}) },
+    cart: {
+      findUnique: async () => null,
+      create: async () => ({ id: "mock" }),
+    },
+    cartItem: {
+      upsert: async () => ({ id: "mock" }),
+      deleteMany: async () => ({}),
+    },
   };
 }
 

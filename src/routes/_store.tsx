@@ -9,7 +9,7 @@ function ClientLayout() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <ClientNav />
-      <main className="flex-1">
+      <main className="flex-1 w-full">
         <Outlet />
       </main>
       <ClientFooter />

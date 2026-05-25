@@ -12,7 +12,11 @@ export function ThemeToggle({ className }: { className?: string }) {
       aria-label="Toggle theme"
       className={className}
     >
-      {theme === "light" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
+      {theme === "light" ? (
+        <Moon className="h-5 w-5" />
+      ) : (
+        <Sun className="h-5 w-5" />
+      )}
     </Button>
   );
 }

@@ -1,4 +1,10 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
 
 type Theme = "light" | "dark";
 const Ctx = createContext<{ theme: Theme; toggle: () => void } | null>(null);
@@ -7,8 +13,11 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<Theme>("light");
 
   useEffect(() => {
-    const saved = (localStorage.getItem("sb_theme") as Theme | null) ??
-      (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    const saved =
+      (localStorage.getItem("sb_theme") as Theme | null) ??
+      (window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "dark"
+        : "light");
     setTheme(saved);
   }, []);
 
@@ -18,7 +27,12 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   }, [theme]);
 
   return (
-    <Ctx.Provider value={{ theme, toggle: () => setTheme((t) => (t === "light" ? "dark" : "light")) }}>
+    <Ctx.Provider
+      value={{
+        theme,
+        toggle: () => setTheme((t) => (t === "light" ? "dark" : "light")),
+      }}
+    >
       {children}
     </Ctx.Provider>
   );

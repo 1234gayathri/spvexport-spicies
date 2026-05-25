@@ -2,16 +2,27 @@ import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Store, Mail, Phone, MapPin, IndianRupee, Percent, Save, Check } from "lucide-react";
+import {
+  Store,
+  Mail,
+  Phone,
+  MapPin,
+  IndianRupee,
+  Percent,
+  Save,
+  Check,
+} from "lucide-react";
 import { AdminShell } from "@/components/admin/AdminShell";
 import type { StoreSettings } from "@/lib/db";
 
 // ─── Server Functions ──────────────────────────────────────────────────────────
 
-export const getSettingsFn = createServerFn({ method: "GET" }).handler(async () => {
-  const { getSettings } = await import("@/lib/db");
-  return await getSettings();
-});
+export const getSettingsFn = createServerFn({ method: "GET" }).handler(
+  async () => {
+    const { getSettings } = await import("@/lib/db");
+    return await getSettings();
+  },
+);
 
 export const updateSettingsFn = createServerFn({ method: "POST" })
   .inputValidator((data: Partial<StoreSettings>) => data)
@@ -39,8 +50,12 @@ function SettingsPage() {
   const [email, setEmail] = useState(initialSettings.email);
   const [phone, setPhone] = useState(initialSettings.phone);
   const [address, setAddress] = useState(initialSettings.address);
-  const [shippingFee, setShippingFee] = useState(String(initialSettings.shippingFee));
-  const [freeShippingThreshold, setFreeShippingThreshold] = useState(String(initialSettings.freeShippingThreshold));
+  const [shippingFee, setShippingFee] = useState(
+    String(initialSettings.shippingFee),
+  );
+  const [freeShippingThreshold, setFreeShippingThreshold] = useState(
+    String(initialSettings.freeShippingThreshold),
+  );
   const [taxRate, setTaxRate] = useState(String(initialSettings.taxRate));
   const [currency, setCurrency] = useState(initialSettings.currency);
 
@@ -79,7 +94,10 @@ function SettingsPage() {
   };
 
   return (
-    <AdminShell title="Store Settings" subtitle="Configure store identity, customer contact, and delivery financials.">
+    <AdminShell
+      title="Store Settings"
+      subtitle="Configure store identity, customer contact, and delivery financials."
+    >
       <form onSubmit={handleSave} className="max-w-4xl space-y-6">
         <div className="grid gap-6 md:grid-cols-2">
           {/* General Store Profile */}
@@ -91,9 +109,11 @@ function SettingsPage() {
             <h3 className="font-display text-lg font-semibold flex items-center gap-2 border-b pb-2">
               <Store className="h-5 w-5 text-primary" /> Store Profile
             </h3>
-            
+
             <label className="block">
-              <span className="text-xs font-medium text-muted-foreground">Store Name</span>
+              <span className="text-xs font-medium text-muted-foreground">
+                Store Name
+              </span>
               <input
                 type="text"
                 required
@@ -105,7 +125,9 @@ function SettingsPage() {
             </label>
 
             <label className="block">
-              <span className="text-xs font-medium text-muted-foreground">Currency</span>
+              <span className="text-xs font-medium text-muted-foreground">
+                Currency
+              </span>
               <select
                 value={currency}
                 onChange={(e) => setCurrency(e.target.value)}
@@ -127,12 +149,15 @@ function SettingsPage() {
             className="rounded-2xl border bg-card p-6 shadow-soft space-y-4"
           >
             <h3 className="font-display text-lg font-semibold flex items-center gap-2 border-b pb-2">
-              <IndianRupee className="h-5 w-5 text-primary" /> Pricing & Delivery
+              <IndianRupee className="h-5 w-5 text-primary" /> Pricing &
+              Delivery
             </h3>
 
             <div className="grid grid-cols-2 gap-4">
               <label className="block">
-                <span className="text-xs font-medium text-muted-foreground">Standard Shipping (₹)</span>
+                <span className="text-xs font-medium text-muted-foreground">
+                  Standard Shipping (₹)
+                </span>
                 <input
                   type="number"
                   required
@@ -144,7 +169,9 @@ function SettingsPage() {
               </label>
 
               <label className="block">
-                <span className="text-xs font-medium text-muted-foreground">Free Above (₹)</span>
+                <span className="text-xs font-medium text-muted-foreground">
+                  Free Above (₹)
+                </span>
                 <input
                   type="number"
                   required
@@ -187,7 +214,9 @@ function SettingsPage() {
 
           <div className="grid gap-4 sm:grid-cols-2">
             <label className="block">
-              <span className="text-xs font-medium text-muted-foreground">Support Email Address</span>
+              <span className="text-xs font-medium text-muted-foreground">
+                Support Email Address
+              </span>
               <div className="mt-1 relative">
                 <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <input
@@ -202,7 +231,9 @@ function SettingsPage() {
             </label>
 
             <label className="block">
-              <span className="text-xs font-medium text-muted-foreground">Store Contact Number</span>
+              <span className="text-xs font-medium text-muted-foreground">
+                Store Contact Number
+              </span>
               <div className="mt-1 relative">
                 <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <input
@@ -217,7 +248,9 @@ function SettingsPage() {
             </label>
 
             <label className="block sm:col-span-2">
-              <span className="text-xs font-medium text-muted-foreground">Physical Store Address</span>
+              <span className="text-xs font-medium text-muted-foreground">
+                Physical Store Address
+              </span>
               <div className="mt-1 relative">
                 <MapPin className="absolute left-3.5 top-3.5 h-4 w-4 text-muted-foreground" />
                 <textarea
@@ -241,7 +274,8 @@ function SettingsPage() {
               animate={{ opacity: 1, x: 0 }}
               className="text-sm font-semibold text-secondary flex items-center gap-1.5"
             >
-              <Check className="h-4 w-4 stroke-[3px]" /> Settings saved successfully!
+              <Check className="h-4 w-4 stroke-[3px]" /> Settings saved
+              successfully!
             </motion.div>
           )}
 

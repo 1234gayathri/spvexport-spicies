@@ -6,13 +6,22 @@ import { AdminShell } from "@/components/admin/AdminShell";
 
 // ─── Server Functions ──────────────────────────────────────────────────────────
 
-export const getCouponsFn = createServerFn({ method: "GET" }).handler(async () => {
-  const { getCoupons } = await import("@/lib/db");
-  return await getCoupons();
-});
+export const getCouponsFn = createServerFn({ method: "GET" }).handler(
+  async () => {
+    const { getCoupons } = await import("@/lib/db");
+    return await getCoupons();
+  },
+);
 
 export const addCouponFn = createServerFn({ method: "POST" })
-  .inputValidator((data: { code: string; description: string; maxUses: number; expiry: string }) => data)
+  .inputValidator(
+    (data: {
+      code: string;
+      description: string;
+      maxUses: number;
+      expiry: string;
+    }) => data,
+  )
   .handler(async ({ data }) => {
     const { addCoupon } = await import("@/lib/db");
     return await addCoupon(data);
@@ -60,7 +69,10 @@ function Offers() {
         },
       });
       setModal(false);
-      setCode(""); setDescription(""); setMaxUses(""); setExpiry("");
+      setCode("");
+      setDescription("");
+      setMaxUses("");
+      setExpiry("");
       await router.invalidate();
     } finally {
       setIsSubmitting(false);
@@ -78,7 +90,10 @@ function Offers() {
   const expiredCoupons = coupons.filter((c) => !c.active);
 
   return (
-    <AdminShell title="Offers & Coupons" subtitle="Promotions and discount campaigns.">
+    <AdminShell
+      title="Offers & Coupons"
+      subtitle="Promotions and discount campaigns."
+    >
       {/* Header */}
       <div className="mb-5 flex items-center justify-between">
         <div className="text-sm text-muted-foreground">
@@ -95,7 +110,10 @@ function Offers() {
       {/* Coupon grid */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {coupons.map((c) => (
-          <div key={c.code} className="relative overflow-hidden rounded-2xl border bg-card p-6 shadow-soft">
+          <div
+            key={c.code}
+            className="relative overflow-hidden rounded-2xl border bg-card p-6 shadow-soft"
+          >
             <div className="absolute -right-8 -top-8 h-28 w-28 rounded-full bg-primary/10 blur-2xl" />
             <div className="relative">
               <div className="flex items-center justify-between">
@@ -119,16 +137,24 @@ function Offers() {
                   </button>
                 </div>
               </div>
-              <div className="mt-4 font-mono text-2xl font-bold text-primary">{c.code}</div>
-              <div className="mt-1 text-sm text-muted-foreground">{c.description}</div>
+              <div className="mt-4 font-mono text-2xl font-bold text-primary">
+                {c.code}
+              </div>
+              <div className="mt-1 text-sm text-muted-foreground">
+                {c.description}
+              </div>
               <div className="mt-4 h-1.5 w-full overflow-hidden rounded-full bg-muted">
                 <div
                   className="h-full bg-gradient-warm transition-all"
-                  style={{ width: `${Math.min((c.uses / c.maxUses) * 100, 100)}%` }}
+                  style={{
+                    width: `${Math.min((c.uses / c.maxUses) * 100, 100)}%`,
+                  }}
                 />
               </div>
               <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
-                <span>{c.uses} / {c.maxUses} uses</span>
+                <span>
+                  {c.uses} / {c.maxUses} uses
+                </span>
                 <span className="inline-flex items-center gap-1">
                   <Calendar className="h-3 w-3" /> {c.expiry}
                 </span>
@@ -137,7 +163,9 @@ function Offers() {
           </div>
         ))}
         {coupons.length === 0 && (
-          <p className="col-span-3 py-10 text-center text-muted-foreground">No coupons yet. Create one!</p>
+          <p className="col-span-3 py-10 text-center text-muted-foreground">
+            No coupons yet. Create one!
+          </p>
         )}
       </div>
 
@@ -151,7 +179,9 @@ function Offers() {
             onClick={(e) => e.stopPropagation()}
             className="w-full max-w-md rounded-2xl bg-card p-6 shadow-elegant"
           >
-            <h3 className="font-display text-2xl font-semibold">Create new coupon</h3>
+            <h3 className="font-display text-2xl font-semibold">
+              Create new coupon
+            </h3>
             <div className="mt-5 space-y-4">
               <Field
                 label="Coupon Code"
@@ -189,7 +219,9 @@ function Offers() {
               </button>
               <button
                 onClick={handleAddCoupon}
-                disabled={isSubmitting || !code || !description || !maxUses || !expiry}
+                disabled={
+                  isSubmitting || !code || !description || !maxUses || !expiry
+                }
                 className="rounded-full bg-foreground px-5 py-2 text-sm font-semibold text-background disabled:opacity-50"
               >
                 {isSubmitting ? "Creating…" : "Create coupon"}

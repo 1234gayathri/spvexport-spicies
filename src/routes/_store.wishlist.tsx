@@ -19,9 +19,15 @@ function WishlistPage() {
   return (
     <div className="mx-auto max-w-7xl px-6 py-12">
       <div className="flex flex-col gap-2">
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">Favourites</p>
-        <h1 className="font-display text-4xl font-semibold sm:text-5xl">My Wishlist</h1>
-        <p className="text-muted-foreground">Keep track of your favorite spices and blends.</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+          Favourites
+        </p>
+        <h1 className="font-display text-4xl font-semibold sm:text-5xl">
+          My Wishlist
+        </h1>
+        <p className="text-muted-foreground">
+          Keep track of your favorite spices and blends.
+        </p>
       </div>
 
       {favorited.length === 0 ? (
@@ -29,9 +35,12 @@ function WishlistPage() {
           <div className="h-16 w-16 bg-accent/10 text-accent rounded-full flex items-center justify-center mb-6">
             <Heart className="h-8 w-8" />
           </div>
-          <h2 className="font-display text-2xl font-semibold">Your wishlist is empty</h2>
+          <h2 className="font-display text-2xl font-semibold">
+            Your wishlist is empty
+          </h2>
           <p className="mt-2 text-muted-foreground text-sm px-6">
-            Explore our curated selection of farm-fresh spices and add your favorites here.
+            Explore our curated selection of farm-fresh spices and add your
+            favorites here.
           </p>
           <Link
             to="/shop"

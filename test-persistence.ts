@@ -1,6 +1,6 @@
 /**
  * test-persistence.ts — Test data persistence across different storage backends
- * 
+ *
  * This script tests that data persists via:
  * 1. In-memory cache
  * 2. Local JSON file (data/db.json)
@@ -38,7 +38,9 @@ async function testPersistence() {
     };
 
     const addedProduct = await addProduct(testProduct);
-    console.log(`✓ Added product: ${addedProduct.name} (ID: ${addedProduct.id})`);
+    console.log(
+      `✓ Added product: ${addedProduct.name} (ID: ${addedProduct.id})`,
+    );
 
     // Verify immediate retrieval
     let products = await getProducts();
@@ -65,13 +67,17 @@ async function testPersistence() {
     const addedOrder = await addOrder(testOrder, [
       { id: addedProduct.id, qty: 2 },
     ]);
-    console.log(`✓ Added order: ${addedOrder.id} (Customer: ${addedOrder.customer})`);
+    console.log(
+      `✓ Added order: ${addedOrder.id} (Customer: ${addedOrder.customer})`,
+    );
 
     let orders = await getOrders();
     const foundOrder = orders.find((o) => o.id === addedOrder.id);
     if (foundOrder) {
       console.log(`✓ Order found immediately after adding`);
-      console.log(`  └─ Status: ${foundOrder.status}, Date: ${foundOrder.date}`);
+      console.log(
+        `  └─ Status: ${foundOrder.status}, Date: ${foundOrder.date}`,
+      );
     } else {
       console.log(`✗ Order NOT found immediately (PERSISTENCE FAILED)`);
       process.exit(1);
@@ -93,7 +99,9 @@ async function testPersistence() {
     const foundCoupon = coupons.find((c) => c.code === addedCoupon.code);
     if (foundCoupon) {
       console.log(`✓ Coupon found immediately after adding`);
-      console.log(`  └─ Uses: ${foundCoupon.uses}, Active: ${foundCoupon.active}`);
+      console.log(
+        `  └─ Uses: ${foundCoupon.uses}, Active: ${foundCoupon.active}`,
+      );
     } else {
       console.log(`✗ Coupon NOT found immediately (PERSISTENCE FAILED)`);
       process.exit(1);
@@ -131,11 +139,13 @@ async function testPersistence() {
 
     let testimonials = await getTestimonials();
     const foundTestimonial = testimonials.find(
-      (t) => t.id === addedTestimonial.id
+      (t) => t.id === addedTestimonial.id,
     );
     if (foundTestimonial) {
       console.log(`✓ Testimonial found immediately after adding`);
-      console.log(`  └─ Quote: "${foundTestimonial.quote.substring(0, 50)}..."`);
+      console.log(
+        `  └─ Quote: "${foundTestimonial.quote.substring(0, 50)}..."`,
+      );
     } else {
       console.log(`✗ Testimonial NOT found immediately (PERSISTENCE FAILED)`);
       process.exit(1);
@@ -195,7 +205,7 @@ async function testPersistence() {
     console.log(`  ✓ Upstash Redis (if configured via env vars)`);
     console.log(`  ✓ PostgreSQL via Prisma (if configured)`);
     console.log(
-      "\n📝 Data persists across server restarts and session boundaries!"
+      "\n📝 Data persists across server restarts and session boundaries!",
     );
 
     process.exit(0);

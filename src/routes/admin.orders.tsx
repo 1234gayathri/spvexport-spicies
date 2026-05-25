@@ -7,10 +7,12 @@ import { StatusBadge } from "./admin.index";
 
 // ─── Server Functions ──────────────────────────────────────────────────────────
 
-export const getOrdersFn = createServerFn({ method: "GET" }).handler(async () => {
-  const { getOrders } = await import("@/lib/db");
-  return await getOrders();
-});
+export const getOrdersFn = createServerFn({ method: "GET" }).handler(
+  async () => {
+    const { getOrders } = await import("@/lib/db");
+    return await getOrders();
+  },
+);
 
 export const updateOrderStatusFn = createServerFn({ method: "POST" })
   .inputValidator((data: { id: string; status: string }) => data)
@@ -27,7 +29,14 @@ export const Route = createFileRoute("/admin/orders")({
   head: () => ({ meta: [{ title: "Orders — Sadbhaav Admin" }] }),
 });
 
-const STATUS_TABS = ["All", "Pending", "Processing", "Shipped", "Delivered", "Cancelled"];
+const STATUS_TABS = [
+  "All",
+  "Pending",
+  "Processing",
+  "Shipped",
+  "Delivered",
+  "Cancelled",
+];
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
@@ -95,7 +104,9 @@ function Orders() {
               <th className="px-5 py-3 text-left font-medium">Items</th>
               <th className="px-5 py-3 text-left font-medium">Status</th>
               <th className="px-5 py-3 text-right font-medium">Total</th>
-              <th className="px-5 py-3 text-right font-medium">Update Status</th>
+              <th className="px-5 py-3 text-right font-medium">
+                Update Status
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -105,8 +116,12 @@ function Orders() {
                 <td className="px-5 py-3">{o.customer}</td>
                 <td className="px-5 py-3 text-muted-foreground">{o.date}</td>
                 <td className="px-5 py-3">{o.items}</td>
-                <td className="px-5 py-3"><StatusBadge s={o.status} /></td>
-                <td className="px-5 py-3 text-right font-semibold">₹{o.total}</td>
+                <td className="px-5 py-3">
+                  <StatusBadge s={o.status} />
+                </td>
+                <td className="px-5 py-3 text-right font-semibold">
+                  ₹{o.total}
+                </td>
                 <td className="px-5 py-3 text-right">
                   <select
                     value={o.status}
@@ -124,7 +139,10 @@ function Orders() {
             ))}
             {list.length === 0 && (
               <tr>
-                <td colSpan={7} className="px-5 py-10 text-center text-muted-foreground">
+                <td
+                  colSpan={7}
+                  className="px-5 py-10 text-center text-muted-foreground"
+                >
                   No orders found.
                 </td>
               </tr>
