@@ -15,12 +15,16 @@ export default defineConfig({
     tailwindcss(),
     tsconfigPaths(),
   ],
+
   preview: {
     allowedHosts: true,
   },
+
   ssr: {
+    target: "node",
     external: ["@prisma/client"],
   },
+
   optimizeDeps: {
     exclude: ["@prisma/client"],
   },

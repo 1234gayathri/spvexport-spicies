@@ -120,7 +120,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
       <head>
         <HeadContent />
       </head>
-      <body>
+      <body className="bg-white text-slate-900" style={{ backgroundColor: '#ffffff' }}>
         {children}
         <Scripts />
       </body>

@@ -98,37 +98,37 @@
 }
 
 .dark {
-  --background: #064e3b;
-  --foreground: #f0fdf4;
-  --card: #047857;
-  --card-foreground: #f0fdf4;
-  --popover: #047857;
-  --popover-foreground: #f0fdf4;
-  --primary: #10b981;
-  --primary-foreground: #064e3b;
-  --secondary: #6ee7b7;
-  --secondary-foreground: #064e3b;
-  --muted: #059669;
-  --muted-foreground: #d1fae5;
-  --accent: #34d399;
-  --accent-foreground: #064e3b;
-  --destructive: oklch(0.6 0.21 28);
-  --destructive-foreground: #f0fdf4;
-  --border: #10b981 / 30%;
-  --input: #047857 / 50%;
-  --ring: #10b981;
+  --background: #ffffff;
+  --foreground: #1f2937;
+  --card: #ffffff;
+  --card-foreground: #1f2937;
+  --popover: #ffffff;
+  --popover-foreground: #1f2937;
+  --primary: #047857;
+  --primary-foreground: #ffffff;
+  --secondary: #059669;
+  --secondary-foreground: #ffffff;
+  --muted: #ecfdf5;
+  --muted-foreground: #64748b;
+  --accent: #10b981;
+  --accent-foreground: #ffffff;
+  --destructive: oklch(0.55 0.205 28);
+  --destructive-foreground: oklch(0.985 0.012 80);
+  --border: #d1fae5;
+  --input: #f0fdf4;
+  --ring: oklch(0.78 0.155 78);
 
   --gradient-hero:
-    radial-gradient(ellipse at top right, #10b981 / 0.2, transparent 60%),
-    radial-gradient(ellipse at bottom left, #059669 / 0.15, transparent 60%);
+    radial-gradient(ellipse at top right, #047857 / 0.12, transparent 60%),
+    radial-gradient(ellipse at bottom left, #059669 / 0.08, transparent 60%);
 
-  --sidebar: #047857;
-  --sidebar-foreground: #f0fdf4;
-  --sidebar-primary: #10b981;
-  --sidebar-primary-foreground: #064e3b;
-  --sidebar-accent: #059669;
-  --sidebar-accent-foreground: #f0fdf4;
-  --sidebar-border: #10b981 / 30%;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #1f2937;
+  --sidebar-primary: #047857;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #ecfdf5;
+  --sidebar-accent-foreground: #047857;
+  --sidebar-border: #d1fae5;
   --sidebar-ring: #10b981;
 }
 
@@ -136,11 +136,16 @@
   * {
     border-color: var(--color-border);
   }
+  html,
+  body,
+  .bg-background {
+    background-color: #ffffff !important;
+  }
   html {
     font-family: var(--font-sans);
   }
   body {
-    background-color: var(--color-background);
+    background-color: #ffffff !important;
     color: var(--color-foreground);
     font-feature-settings: "ss01", "cv02";
   }

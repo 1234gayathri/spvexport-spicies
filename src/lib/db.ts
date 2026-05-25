@@ -6,6 +6,7 @@
  */
 
 import type { Product } from "./products";
+import { products as defaultProducts } from "./products";
 import prisma from "./prisma";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -76,7 +77,7 @@ export type DbSchema = {
 // ─── Seed Data ────────────────────────────────────────────────────────────────
 
 const SEED: DbSchema = {
-  products: [],
+  products: defaultProducts,
   orders: [],
   customers: [],
   coupons: [],
@@ -199,7 +200,8 @@ async function writeDb(data: DbSchema): Promise<void> {
 
 // Products
 export async function getProducts(): Promise<Product[]> {
-  return (await readDb()).products;
+  const db = await readDb();
+  return db.products.length ? db.products : defaultProducts;
 }
 
 export async function addProduct(
