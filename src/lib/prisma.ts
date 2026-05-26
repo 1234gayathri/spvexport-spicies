@@ -5,23 +5,14 @@ export async function getPrisma() {
     throw new Error("Prisma must run on the server");
   if (_prisma) return _prisma;
   try {
-    // Import from the GENERATED path (matches schema.prisma output)
-    const prismaModule = (await import("@/generated/prisma/client")) as any;
+    // Import standard Prisma client
+    const prismaModule = (await import("@prisma/client")) as any;
     const PrismaClient =
       prismaModule.PrismaClient || prismaModule.default?.PrismaClient;
     _prisma = new PrismaClient();
   } catch (e) {
     console.error("Prisma initialization failed:", e);
-    try {
-      // Fallback: try the standard @prisma/client path
-      const fallbackModule = (await import("@prisma/client")) as any;
-      const PrismaClient =
-        fallbackModule.PrismaClient || fallbackModule.default?.PrismaClient;
-      _prisma = new PrismaClient();
-    } catch (e2) {
-      console.error("Prisma fallback initialization also failed:", e2);
-      _prisma = getMockPrisma();
-    }
+    _prisma = getMockPrisma();
   }
   return _prisma;
 }
