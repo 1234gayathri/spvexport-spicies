@@ -6,7 +6,7 @@ export async function getPrisma() {
   if (_prisma) return _prisma;
   try {
     // Import from the GENERATED path (matches schema.prisma output)
-    const prismaModule = (await import("../generated/prisma/client.js")) as any;
+    const prismaModule = (await import("@/generated/prisma/client")) as any;
     const PrismaClient =
       prismaModule.PrismaClient || prismaModule.default?.PrismaClient;
     _prisma = new PrismaClient();
