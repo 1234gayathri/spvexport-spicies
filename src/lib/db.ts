@@ -237,6 +237,38 @@ export async function deleteProduct(id: string): Promise<boolean> {
 
 // Orders
 export async function getOrders(): Promise<Order[]> {
+  try {
+    if (process.env.DATABASE_URL) {
+      const ordersFromPrisma = await prisma.order.findMany({
+        include: {
+          customer: true,
+          items: true,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
+      if (ordersFromPrisma && ordersFromPrisma.length > 0) {
+        return ordersFromPrisma.map((o: any) => ({
+          id: o.id,
+          customer: o.customer?.name || "Anonymous",
+          email: o.customer?.email,
+          phone: o.customer?.phone || undefined,
+          address: o.customer?.address || undefined,
+          items: o.items.reduce((sum: number, item: any) => sum + item.quantity, 0),
+          total: o.total,
+          status: o.status.charAt(0).toUpperCase() + o.status.slice(1).toLowerCase(),
+          date: new Date(o.createdAt).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          }),
+        }));
+      }
+    }
+  } catch (error) {
+    console.error("[Prisma] Failed to fetch orders from PostgreSQL:", error);
+  }
   return (await readDb()).orders;
 }
 
@@ -244,16 +276,52 @@ export async function updateOrderStatus(
   id: string,
   status: string,
 ): Promise<Order | null> {
+  // Update in in-memory / cache database
   const db = await readDb();
   const idx = db.orders.findIndex((o) => o.id === id);
-  if (idx === -1) return null;
-  db.orders[idx] = { ...db.orders[idx], status };
-  await writeDb(db);
-  return db.orders[idx];
+  if (idx !== -1) {
+    db.orders[idx] = { ...db.orders[idx], status };
+    await writeDb(db);
+  }
+
+  // Update in PostgreSQL database
+  try {
+    if (process.env.DATABASE_URL) {
+      await prisma.order.update({
+        where: { id },
+        data: { status: status.toLowerCase() },
+      });
+      console.log(`[Prisma] Updated order status for ${id} in PostgreSQL to: ${status}`);
+    }
+  } catch (error) {
+    console.error("[Prisma] Failed to update order status in PostgreSQL:", error);
+  }
+
+  return idx !== -1 ? db.orders[idx] : null;
 }
 
 // Customers
 export async function getCustomers(): Promise<Customer[]> {
+  try {
+    if (process.env.DATABASE_URL) {
+      const customersFromPrisma = await prisma.customer.findMany({
+        include: {
+          orders: true,
+        },
+      });
+      if (customersFromPrisma && customersFromPrisma.length > 0) {
+        return customersFromPrisma.map((c: any) => ({
+          name: c.name || "Anonymous",
+          email: c.email,
+          phone: c.phone || "—",
+          orders: c.orders.length,
+          spent: c.orders.reduce((sum: number, o: any) => sum + o.total, 0),
+        }));
+      }
+    }
+  } catch (error) {
+    console.error("[Prisma] Failed to fetch customers from PostgreSQL:", error);
+  }
   return (await readDb()).customers;
 }
 
@@ -356,13 +424,17 @@ export async function updateSettings(
 
 // Dashboard stats and dynamic activity feed
 export async function getDashboardStats() {
-  const db = await readDb();
-  const totalRevenue = db.orders.reduce((sum, o) => sum + o.total, 0);
-  const totalOrders = db.orders.length;
-  const totalCustomers = db.customers.length;
+  const products = await getProducts();
+  const orders = await getOrders();
+  const customers = await getCustomers();
+  const coupons = await getCoupons();
+
+  const totalRevenue = orders.reduce((sum, o) => sum + o.total, 0);
+  const totalOrders = orders.length;
+  const totalCustomers = customers.length;
   const avgOrder = totalOrders > 0 ? Math.round(totalRevenue / totalOrders) : 0;
-  const recentOrders = db.orders.slice(0, 5);
-  const topProducts = [...db.products]
+  const recentOrders = orders.slice(0, 5);
+  const topProducts = [...products]
     .sort((a, b) => b.reviews - a.reviews)
     .slice(0, 4);
 
@@ -374,7 +446,7 @@ export async function getDashboardStats() {
   }[] = [];
 
   // 1. Live Orders (up to 3)
-  db.orders.slice(0, 3).forEach((o, i) => {
+  orders.slice(0, 3).forEach((o, i) => {
     activities.push({
       t: `New order #${o.id} from ${o.customer}`,
       w: i === 0 ? "2 min ago" : i === 1 ? "1 hr ago" : "today",
@@ -383,7 +455,7 @@ export async function getDashboardStats() {
   });
 
   // 2. Low Stock warnings (up to 2)
-  db.products
+  products
     .filter((p) => p.stock < 20)
     .slice(0, 2)
     .forEach((p) => {
@@ -395,7 +467,7 @@ export async function getDashboardStats() {
     });
 
   // 3. Active Coupon usage (up to 2)
-  db.coupons
+  coupons
     .filter((c) => c.active && c.uses > 0)
     .slice(0, 2)
     .forEach((c) => {
@@ -458,12 +530,18 @@ export async function addOrder(
 
   db.orders = [newOrder, ...db.orders];
 
-  // Decrement stock levels
+  // Decrement stock levels & compile product prices for PostgreSQL
+  const prismaItems: { productId: string; quantity: number; price: number }[] = [];
   if (purchasedItems) {
     purchasedItems.forEach((item) => {
       const idx = db.products.findIndex((p) => p.id === item.id);
       if (idx !== -1) {
         db.products[idx].stock = Math.max(0, db.products[idx].stock - item.qty);
+        prismaItems.push({
+          productId: item.id,
+          quantity: item.qty,
+          price: db.products[idx].price,
+        });
       }
     });
   }
@@ -485,7 +563,44 @@ export async function addOrder(
     });
   }
 
+  // Write to cache/JSON database
   await writeDb(db);
+
+  // Write to PostgreSQL database using Prisma
+  try {
+    if (process.env.DATABASE_URL) {
+      // Connect to or create the customer, then create the order and related order items
+      await prisma.order.create({
+        data: {
+          id: newOrder.id,
+          customer: {
+            connectOrCreate: {
+              where: { email: order.email || "" },
+              create: {
+                email: order.email || "",
+                name: order.customer,
+                phone: order.phone || "",
+                address: order.address || "",
+              },
+            },
+          },
+          items: {
+            create: prismaItems.map((item) => ({
+              productId: item.productId,
+              quantity: item.quantity,
+              price: item.price,
+            })),
+          },
+          total: order.total,
+          status: "pending",
+        },
+      });
+      console.log(`[Prisma] Order ${newOrder.id} successfully written to PostgreSQL`);
+    }
+  } catch (error) {
+    console.error("[Prisma] Failed to write order to PostgreSQL:", error);
+  }
+
   return newOrder;
 }
 
