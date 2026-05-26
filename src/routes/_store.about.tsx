@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Globe, Package, Smile, Calendar } from "lucide-react";
+import { WHATSAPP_DISPLAY, createWhatsAppUrl } from "@/lib/constants";
 
 export const Route = createFileRoute("/_store/about")({
   component: About,
@@ -53,8 +54,15 @@ function About() {
           </p>
           <p className="mt-6 text-sm text-foreground font-semibold">
             Contact:{" "}
-            <a href="tel:+919866752785" className="underline">
-              +91 98667 52785
+            <a
+              href={createWhatsAppUrl(
+                "Hello, I would like to place an order and need assistance.",
+              )}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline"
+            >
+              {WHATSAPP_DISPLAY}
             </a>
           </p>
         </div>

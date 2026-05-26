@@ -2,13 +2,9 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
-  LayoutDashboard,
   Package,
-  ShoppingCart,
-  Users,
   Tag,
   Image as ImageIcon,
-  Settings,
   Search,
   Menu,
   X,
@@ -17,13 +13,9 @@ import {
 import { Logo } from "@/components/Logo";
 
 const nav = [
-  { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { to: "/admin/products", label: "Products", icon: Package },
-  { to: "/admin/orders", label: "Orders", icon: ShoppingCart },
-  { to: "/admin/customers", label: "Customers", icon: Users },
-  { to: "/admin/offers", label: "Offers", icon: Tag },
-  { to: "/admin/content", label: "Content", icon: ImageIcon },
-  { to: "/admin/settings", label: "Settings", icon: Settings },
+  { to: "/admin/offers", label: "Coupons", icon: Tag },
+  { to: "/admin/content", label: "Testimonials", icon: ImageIcon },
 ];
 
 export const getAdminHeaderDataFn = createServerFn({ method: "GET" }).handler(

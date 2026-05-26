@@ -8,8 +8,7 @@ export const Route = createFileRoute("/_store/account")({
 
 function AccountPage() {
   useEffect(() => {
-    // Redirect to profile page
-    window.location.href = "/profile";
+    window.location.href = "/";
   }, []);
 
   return (

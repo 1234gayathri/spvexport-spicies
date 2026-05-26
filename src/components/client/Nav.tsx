@@ -1,20 +1,16 @@
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
 import {
-  Heart,
   Search,
-  ShoppingCart,
-  User,
   Menu,
   X,
-  Package,
   ChevronDown,
   Facebook,
   Instagram,
   Linkedin,
 } from "lucide-react";
+import { WHATSAPP_DISPLAY } from "@/lib/constants";
 import { useState } from "react";
 import { Logo } from "@/components/Logo";
-import { useCart } from "@/lib/cart";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -25,6 +21,7 @@ import {
 const links = [
   { to: "/", label: "Home", exact: true },
   { to: "/about", label: "About Us" },
+  { to: "/contact", label: "Contact" },
   { to: "/blog", label: "Blog" },
 ];
 
@@ -35,7 +32,6 @@ const productCategories = [
 ];
 
 export function ClientNav() {
-  const { count } = useCart();
   const [open, setOpen] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [searchVal, setSearchVal] = useState("");
@@ -68,8 +64,8 @@ export function ClientNav() {
             </a>
             <div className="hidden md:flex items-center gap-1 sm:gap-2">
               <span>📞</span>
-              <span className="hidden lg:inline">+91 9384011239 , +91 9840177629</span>
-              <span className="lg:hidden">+91 9384011239</span>
+              <span className="hidden lg:inline">{WHATSAPP_DISPLAY}</span>
+              <span className="lg:hidden">{WHATSAPP_DISPLAY}</span>
             </div>
           </div>
           <div className="flex items-center gap-2 sm:gap-4">
@@ -179,39 +175,6 @@ export function ClientNav() {
                 <Search className="h-4.5 w-4.5" />
               </button>
             )}
-            <Link
-              to="/track"
-              className="hidden md:inline-flex h-9 w-9 items-center justify-center rounded-full hover:bg-accent/10 transition"
-              aria-label="Track Order"
-            >
-              <Package className="h-4.5 w-4.5" />
-            </Link>
-            <Link
-              to="/profile"
-              className="hidden md:inline-flex h-9 w-9 items-center justify-center rounded-full hover:bg-accent/10 transition"
-              aria-label="Profile"
-            >
-              <User className="h-4.5 w-4.5" />
-            </Link>
-            <Link
-              to="/wishlist"
-              className="hidden md:inline-flex h-9 w-9 items-center justify-center rounded-full hover:bg-accent/10 transition"
-              aria-label="Wishlist"
-            >
-              <Heart className="h-4.5 w-4.5" />
-            </Link>
-            <Link
-              to="/checkout"
-              className="relative inline-flex h-9 w-9 items-center justify-center rounded-full hover:bg-accent/10 transition"
-              aria-label="Cart"
-            >
-              <ShoppingCart className="h-4.5 w-4.5" />
-              {count > 0 && (
-                <span className="absolute -right-0.5 -top-0.5 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-bold text-accent-foreground">
-                  {count}
-                </span>
-              )}
-            </Link>
             <button
               onClick={() => setOpen((v) => !v)}
               className="lg:hidden inline-flex h-9 w-9 items-center justify-center rounded-full hover:bg-accent/10 transition"
@@ -265,27 +228,6 @@ export function ClientNav() {
                   ))}
                 </div>
               </details>
-              <Link
-                to="/track"
-                onClick={() => setOpen(false)}
-                className="block py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition"
-              >
-                Track Order
-              </Link>
-              <Link
-                to="/profile"
-                onClick={() => setOpen(false)}
-                className="block py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition"
-              >
-                Profile
-              </Link>
-              <Link
-                to="/wishlist"
-                onClick={() => setOpen(false)}
-                className="block py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition"
-              >
-                Wishlist
-              </Link>
             </div>
           </div>
         )}

@@ -2,23 +2,20 @@ import {
   createFileRoute,
   Link,
   notFound,
-  useNavigate,
 } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import {
   Minus,
   Plus,
-  ShoppingBag,
-  Heart,
   Star,
   Truck,
   ShieldCheck,
   Leaf,
   X,
 } from "lucide-react";
+import { createWhatsAppUrl } from "@/lib/constants";
 import { toast } from "sonner";
-import { useCart } from "@/lib/cart";
 import { ProductCard } from "@/components/client/ProductCard";
 import type { Product } from "@/lib/products";
 
@@ -79,9 +76,9 @@ export const Route = createFileRoute("/_store/product/$id")({
 function ProductDetail() {
   const { product: p, all } = Route.useLoaderData();
   const [qty, setQty] = useState(1);
-  const { add, toggleWish, wishlist } = useCart();
-  const nav = useNavigate();
-  const wished = wishlist.includes(p.id);
+  const whatsappUrl = createWhatsAppUrl(
+    `Hello, I would like to order ${qty} unit${qty > 1 ? "s" : ""} of ${p.name} from your spice catalog. Please share availability and pricing.`,
+  );
   const related = (all as Product[])
     .filter((x: Product) => x.id !== p.id)
     .slice(0, 3);
@@ -235,32 +232,14 @@ function ProductDetail() {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-2">
-            <button
-              onClick={() => {
-                add(p.id, qty);
-                toast.success("Added to cart");
-              }}
+            <a
+              href={whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
               className="flex-1 inline-flex items-center justify-center gap-2 rounded-full bg-foreground px-6 sm:px-7 py-3 sm:py-3.5 text-sm font-semibold text-background hover:opacity-90 transition"
             >
-              <ShoppingBag className="h-4 w-4" /> Add to cart
-            </button>
-            <button
-              onClick={() => {
-                add(p.id, qty);
-                nav({ to: "/checkout" });
-              }}
-              className="flex-1 inline-flex items-center justify-center gap-2 rounded-full bg-accent px-6 sm:px-7 py-3 sm:py-3.5 text-sm font-semibold text-accent-foreground hover:opacity-90 transition"
-            >
-              Buy now
-            </button>
-            <button
-              onClick={() => toggleWish(p.id)}
-              className="inline-flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full border hover:bg-accent/5"
-            >
-              <Heart
-                className={`h-5 w-5 ${wished ? "fill-accent text-accent" : ""}`}
-              />
-            </button>
+              Order on WhatsApp
+            </a>
           </div>
 
           <div className="mt-6 sm:mt-8 grid gap-2 sm:gap-3 grid-cols-1 sm:grid-cols-3 text-xs">

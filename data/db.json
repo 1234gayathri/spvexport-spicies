@@ -276,30 +276,6 @@
   ],
   "coupons": [
     {
-      "code": "SUMMEROFF",
-      "description": "10%",
-      "maxUses": 300,
-      "expiry": "may 29 2026",
-      "uses": 0,
-      "active": true
-    },
-    {
-      "code": "TESTCOUPON2026",
-      "description": "Test coupon for persistence testing",
-      "maxUses": 50,
-      "expiry": "2026-12-31",
-      "uses": 0,
-      "active": true
-    },
-    {
-      "code": "PURE20",
-      "description": "20% off first order",
-      "uses": 0,
-      "maxUses": 1000,
-      "expiry": "2026-12-31",
-      "active": true
-    },
-    {
       "code": "HARVEST10",
       "description": "₹100 off above ₹999",
       "uses": 0,

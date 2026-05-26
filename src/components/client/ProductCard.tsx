@@ -1,16 +1,16 @@
 import { Link } from "@tanstack/react-router";
-import { Heart, Star, ShoppingBag } from "lucide-react";
+import { Star } from "lucide-react";
 import { motion } from "framer-motion";
-import { toast } from "sonner";
 import { useState } from "react";
 import fallbackImg from "@/assets/1.png";
 import { type Product } from "@/lib/products";
-import { useCart } from "@/lib/cart";
+import { createWhatsAppUrl } from "@/lib/constants";
 
 export function ProductCard({ p }: { p: Product }) {
-  const { add, toggleWish, wishlist } = useCart();
-  const wished = wishlist.includes(p.id);
   const [imgLoaded, setImgLoaded] = useState(false);
+  const whatsappUrl = createWhatsAppUrl(
+    `Hello, I would like to order ${p.name} from your spices catalog. Please share availability and pricing.`,
+  );
 
   return (
     <motion.div
@@ -45,18 +45,6 @@ export function ProductCard({ p }: { p: Product }) {
               {p.badge}
             </span>
           )}
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              toggleWish(p.id);
-            }}
-            className="absolute right-3 top-3 inline-flex h-9 w-9 items-center justify-center rounded-full bg-card/90 backdrop-blur transition hover:scale-110"
-            aria-label="Wishlist"
-          >
-            <Heart
-              className={`h-4 w-4 ${wished ? "fill-accent text-accent" : ""}`}
-            />
-          </button>
         </div>
       </Link>
         <div className="p-4">
@@ -93,15 +81,14 @@ export function ProductCard({ p }: { p: Product }) {
             )}
           </div>
           {p.stock > 0 ? (
-            <button
-              onClick={() => {
-                add(p.id);
-                toast.success(`${p.name} added to cart`);
-              }}
+            <a
+              href={whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 rounded-full bg-foreground px-3 py-2 sm:py-1.5 text-sm sm:text-xs font-semibold text-background transition hover:opacity-90 w-full sm:w-auto justify-center"
             >
-              <ShoppingBag className="h-3.5 w-3.5" /> Add
-            </button>
+              Order on WhatsApp
+            </a>
           ) : (
             <span className="rounded-full bg-destructive/10 px-3 py-1.5 text-xs font-semibold text-destructive">
               Out of Stock
