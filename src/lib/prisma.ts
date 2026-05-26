@@ -5,34 +5,69 @@ export async function getPrisma() {
     throw new Error("Prisma must run on the server");
   if (_prisma) return _prisma;
   try {
-    const prismaModule = (await import("@prisma/client")) as any;
+    // Import from the GENERATED path (matches schema.prisma output)
+    const prismaModule = (await import("../generated/prisma/client.js")) as any;
     const PrismaClient =
       prismaModule.PrismaClient || prismaModule.default?.PrismaClient;
     _prisma = new PrismaClient();
   } catch (e) {
     console.error("Prisma initialization failed:", e);
-    _prisma = getMockPrisma();
+    try {
+      // Fallback: try the standard @prisma/client path
+      const fallbackModule = (await import("@prisma/client")) as any;
+      const PrismaClient =
+        fallbackModule.PrismaClient || fallbackModule.default?.PrismaClient;
+      _prisma = new PrismaClient();
+    } catch (e2) {
+      console.error("Prisma fallback initialization also failed:", e2);
+      _prisma = getMockPrisma();
+    }
   }
   return _prisma;
 }
 
 function getMockPrisma(): any {
+  const noopFindMany = async () => [];
+  const noopCreate = async () => ({ id: "mock" });
+  const noopUpdate = async () => ({ id: "mock" });
+  const noopFindUnique = async () => null;
+  const noopUpsert = async () => ({ id: "mock" });
+  const noopDeleteMany = async () => ({});
+  const noopUpdateMany = async () => ({});
+
   return {
-    order: { create: async () => ({ id: "mock" }), findMany: async () => [] },
-    product: {
-      create: async () => ({ id: "mock" }),
-      findMany: async () => [],
-      update: async () => ({ id: "mock" }),
-      findUnique: async () => null,
+    order: {
+      create: noopCreate,
+      findMany: noopFindMany,
+      update: noopUpdate,
+      findUnique: noopFindUnique,
     },
-    customer: { findUnique: async () => null },
+    product: {
+      create: noopCreate,
+      findMany: noopFindMany,
+      update: noopUpdate,
+      findUnique: noopFindUnique,
+    },
+    customer: {
+      create: noopCreate,
+      findMany: noopFindMany,
+      findUnique: noopFindUnique,
+      update: noopUpdate,
+    },
     cart: {
-      findUnique: async () => null,
-      create: async () => ({ id: "mock" }),
+      findUnique: noopFindUnique,
+      create: noopCreate,
     },
     cartItem: {
-      upsert: async () => ({ id: "mock" }),
-      deleteMany: async () => ({}),
+      upsert: noopUpsert,
+      deleteMany: noopDeleteMany,
+    },
+    coupon: {
+      create: noopCreate,
+      findMany: noopFindMany,
+      findUnique: noopFindUnique,
+      update: noopUpdate,
+      delete: async () => ({}),
     },
   };
 }
@@ -48,6 +83,10 @@ export default {
     findMany: async (...args: any[]): Promise<any[]> => {
       const instance = await prismaInstance;
       return instance.order.findMany(...args);
+    },
+    update: async (...args: any[]): Promise<any> => {
+      const instance = await prismaInstance;
+      return instance.order.update(...args);
     },
   },
   product: {
@@ -72,6 +111,14 @@ export default {
     findUnique: async (...args: any[]): Promise<any> => {
       const instance = await prismaInstance;
       return instance.customer.findUnique(...args);
+    },
+    findMany: async (...args: any[]): Promise<any[]> => {
+      const instance = await prismaInstance;
+      return instance.customer.findMany(...args);
+    },
+    create: async (...args: any[]): Promise<any> => {
+      const instance = await prismaInstance;
+      return instance.customer.create(...args);
     },
   },
   cart: {
