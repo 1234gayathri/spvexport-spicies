@@ -57,13 +57,12 @@ function ClientHome() {
     <>
       {/* Hero banner — animated carousel background */}
       <section
-        className="relative overflow-hidden"
+        className="relative overflow-hidden flex items-center min-h-[500px] sm:min-h-[520px]"
         style={{
-          backgroundImage: `linear-gradient(rgba(0,0,0,0.08), rgba(0,0,0,0.04)), url(${heroBg})`,
-          backgroundSize: "110%",
-          backgroundPosition: "center 30%",
+          backgroundImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), url(${heroBg})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center 35%",
           backgroundRepeat: "no-repeat",
-          minHeight: "520px",
           filter: "brightness(1.05)",
         }}
       >
@@ -76,7 +75,7 @@ function ClientHome() {
             <span className="inline-flex items-center gap-1.5 rounded-full bg-accent/10 px-3 py-1 text-xs font-semibold text-accent">
               <Sparkles className="h-3 w-3" /> Fresh harvest 2026
             </span>
-            <h1 className="mt-5 font-display font-semibold tracking-tight text-white drop-shadow-md text-[clamp(2rem,6vw,4.5rem)] leading-[clamp(2.2rem,6.5vw,4.8rem)]">
+            <h1 className="mt-5 font-display font-semibold tracking-tight text-white drop-shadow-md text-[clamp(1.75rem,5.5vw,4.5rem)] leading-[clamp(2.1rem,6vw,4.8rem)]">
               The taste of <span className="text-emerald-200">home</span>,
               perfected.
             </h1>
@@ -99,14 +98,6 @@ function ClientHome() {
               >
                 Explore New Arrivals
               </Link>
-
-              {/* <Link to="/shop" className="inline-flex items-center gap-2 rounded-full bg-foreground px-6 py-3 text-sm font-semibold text-background hover:opacity-90 transition">
-                Shop the collection <ArrowRight className="h-4 w-4" />
-              </Link>
-              
-              <Link to="/shop" className="inline-flex items-center gap-2 rounded-full border px-6 py-3 text-sm font-semibold hover:bg-accent/5 transition">
-                New arrivals
-              </Link> */}
             </div>
           </motion.div>
 
@@ -114,7 +105,7 @@ function ClientHome() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8 }}
-            className="relative aspect-[5/4] overflow-hidden rounded-3xl shadow-elegant bg-gradient-hero flex items-center justify-center"
+            className="hidden lg:flex relative aspect-[5/4] overflow-hidden rounded-3xl shadow-elegant bg-gradient-hero items-center justify-center"
           >
               <div className="p-8 max-w-md text-left">
               {/* Hero content only; homepage banner carousel removed */}
