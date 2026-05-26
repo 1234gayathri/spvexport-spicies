@@ -161,7 +161,15 @@ async function readDb(): Promise<DbSchema> {
   // 1. Return in-memory cache if available (fastest)
   if (_cache) return _cache;
 
-  // 2. Try local JSON file (fast, works within same server session)
+  // 2. Try Upstash Redis first (if configured, survives restarts/redeploys)
+  const fromRedis = await redisGet();
+  if (fromRedis) {
+    _cache = fromRedis;
+    await writeLocal(fromRedis);
+    return _cache;
+  }
+
+  // 3. Fallback to local JSON file (fast, works within same server session / local dev)
   try {
     const { fs, DB_FILE } = await getLocalDbPaths();
     if (fs.existsSync(DB_FILE)) {
@@ -176,14 +184,6 @@ async function readDb(): Promise<DbSchema> {
       return _cache;
     }
   } catch {}
-
-  // 3. Fetch from Upstash Redis (survives restarts/redeploys)
-  const fromRedis = await redisGet();
-  if (fromRedis) {
-    _cache = fromRedis;
-    writeLocal(fromRedis);
-    return _cache;
-  }
 
   // 4. First-ever run — use seed data
   _cache = structuredClone(SEED);
